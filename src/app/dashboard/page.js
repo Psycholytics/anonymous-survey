@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -398,7 +400,7 @@ export default function DashboardPage() {
               sessionStorage.setItem("nav_from_dashboard", "1");
               router.push("/create");
             }}
-            
+
             className="rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           >
             New survey
