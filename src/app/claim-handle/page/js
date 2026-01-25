@@ -1,0 +1,193 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+
+function normalizeHandle(raw) {
+  return String(raw || "")
+    .trim()
+    .toLowerCase()
+    .replace(/^@+/, "")
+    .replace(/[^a-z0-9_]/g, "_")
+    .slice(0, 20);
+}
+
+function isValidHandle(handle) {
+  // 3-20 chars, letters/numbers/underscore, cannot start with underscore
+  return /^[a-z0-9][a-z0-9_]{2,19}$/.test(handle);
+}
+
+export default function ClaimHandlePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const nextUrl = useMemo(() => {
+    const n = searchParams.get("next");
+    return n && n.startsWith("/") ? n : "/dashboard";
+  }, [searchParams]);
+
+  const [handle, setHandle] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    const desired = normalizeHandle(handle);
+
+    if (!desired) {
+      alert("Username is required.");
+      return;
+    }
+
+    if (!isValidHandle(desired)) {
+      alert(
+        "Username must be 3–20 chars, letters/numbers/underscore, and start with a letter/number."
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Must be logged in to claim
+      const { data: uRes, error: uErr } = await supabase.auth.getUser();
+      const user = uRes?.user || null;
+
+      if (uErr) console.error("AUTH GET USER ERROR:", uErr);
+
+      if (!user) {
+        router.push(`/login?mode=login&next=${encodeURIComponent("/claim-handle?next=" + nextUrl)}`);
+        return;
+      }
+
+      // Is the handle taken?
+      const { data: taken, error: takenErr } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("handle", desired)
+        .maybeSingle();
+
+      if (takenErr) {
+        console.error("HANDLE CHECK ERROR:", takenErr);
+        alert("Could not check username. Try again.");
+        return;
+      }
+
+      if (taken?.user_id && taken.user_id !== user.id) {
+        alert("That username is taken. Try another one.");
+        return;
+      }
+
+      // Do we already have a profile row?
+      const { data: prof, error: profErr } = await supabase
+        .from("profiles")
+        .select("user_id, handle")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profErr) {
+        console.error("PROFILE CHECK ERROR:", profErr);
+        alert("Could not load profile. Try again.");
+        return;
+      }
+
+      if (prof?.user_id) {
+        // Update existing row
+        const { error: updErr } = await supabase
+          .from("profiles")
+          .update({ handle: desired })
+          .eq("user_id", user.id);
+
+        if (updErr) {
+          console.error("PROFILE UPDATE ERROR:", updErr);
+          alert(updErr.message || "Failed to save username.");
+          return;
+        }
+      } else {
+        // Insert new row
+        const { error: insErr } = await supabase
+          .from("profiles")
+          .insert([{ user_id: user.id, handle: desired }]);
+
+        if (insErr) {
+          console.error("PROFILE INSERT ERROR:", insErr);
+          alert(insErr.message || "Failed to save username.");
+          return;
+        }
+      }
+
+      router.push(nextUrl);
+      router.refresh?.();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-white text-gray-900">
+      {/* Soft gradient background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
+        <div className="absolute top-28 right-[-140px] h-[560px] w-[560px] rounded-full bg-purple-500/10 blur-[110px]" />
+        <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
+      </div>
+
+      <header className="relative mx-auto flex max-w-4xl items-center justify-between px-6 py-6">
+        <a href="/" className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+          <div className="leading-tight">
+            <div className="text-sm font-extrabold tracking-tight">
+              Tell Me What You Really Think
+            </div>
+            <div className="text-[11px] text-gray-500">Choose your username</div>
+          </div>
+        </a>
+
+        <a
+          href={nextUrl}
+          className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+        >
+          Back
+        </a>
+      </header>
+
+      <section className="relative mx-auto max-w-md px-6 pt-6 pb-20">
+        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h1 className="text-xl font-extrabold tracking-tight">Claim your username</h1>
+
+          <p className="mt-2 text-sm text-gray-600">
+            This username becomes your public profile link and stays unique.
+          </p>
+
+          <form onSubmit={onSubmit} className="mt-6 space-y-4">
+            <div>
+              <label className="text-sm font-semibold text-gray-800">Username</label>
+              <div className="mt-2 flex items-center rounded-2xl border border-gray-200 bg-white p-3 shadow-sm focus-within:border-purple-300">
+                <span className="text-sm text-gray-500">@</span>
+                <input
+                  className="ml-2 w-full text-sm outline-none"
+                  value={handle}
+                  onChange={(e) => setHandle(normalizeHandle(e.target.value))}
+                  placeholder="albert_alston"
+                  autoComplete="off"
+                />
+              </div>
+              <p className="mt-2 text-xs text-gray-500">
+                3–20 chars. Letters/numbers/underscore.
+              </p>
+            </div>
+
+            <button
+              disabled={loading}
+              className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+              type="submit"
+            >
+              {loading ? "Saving..." : "Save username"}
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+  );
+}
