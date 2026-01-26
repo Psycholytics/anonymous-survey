@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseServer } from "@/lib/supabaseServer";
@@ -29,7 +31,7 @@ export async function POST(req) {
     }
 
     // ✅ Auth (server-side)
-    const supabase = supabaseServer();
+    const supabase =  await supabaseServer();
     const { data: userRes, error: userErr } = await supabase.auth.getUser();
     const user = userRes?.user || null;
 
@@ -62,12 +64,13 @@ export async function POST(req) {
 
     // ✅ Use caller-provided URLs if present (your unlock page sends them),
     // otherwise fallback to env-based URLs.
-    const site = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
+    const site = process.env.NEXT_PUBLIC_SITE_URL || new URL(req.url).origin;
+
     const success =
       successUrl ||
-      `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?surveyId=${surveyId}&unlocked=1`;
+      `${site}/dashboard?surveyId=${surveyId}&unlocked=1`;
     const cancel =
-      cancelUrl || `${process.env.NEXT_PUBLIC_SITE_URL}/unlock/${surveyId}`;
+      cancelUrl || `${site}/unlock/${surveyId}`;
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
