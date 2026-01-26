@@ -31,7 +31,7 @@ export async function POST(req) {
     }
 
     // ✅ Auth (server-side)
-    const supabase =  await supabaseServer();
+    const supabase = supabaseServer(req);
     const { data: userRes, error: userErr } = await supabase.auth.getUser();
     const user = userRes?.user || null;
 
