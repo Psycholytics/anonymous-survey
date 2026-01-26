@@ -1,9 +1,8 @@
-// src/lib/supabaseServer.js
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-export function supabaseServer() {
-  const cookieStore = cookies();
+export async function supabaseServer() {
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -14,10 +13,18 @@ export function supabaseServer() {
           return cookieStore.get(name)?.value;
         },
         set(name, value, options) {
-          cookieStore.set({ name, value, ...options });
+          try {
+            cookieStore.set(name, value, options);
+          } catch {
+            // Can throw in some server component contexts — safe to ignore
+          }
         },
-        remove(name, options) {
-          cookieStore.set({ name, value: "", ...options, maxAge: 0 });
+        remove(name) {
+          try {
+            cookieStore.delete(name);
+          } catch {
+            // Safe to ignore
+          }
         },
       },
     }
