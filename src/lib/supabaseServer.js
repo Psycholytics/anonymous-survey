@@ -1,3 +1,4 @@
+// src/lib/supabaseServer.js
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
@@ -13,10 +14,10 @@ export function supabaseServer() {
           return cookieStore.get(name)?.value;
         },
         set(name, value, options) {
-          cookieStore.set(name, value, options);
+          cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          cookieStore.set(name, "", { ...options, maxAge: 0 });
+          cookieStore.set({ name, value: "", ...options, maxAge: 0 });
         },
       },
     }
