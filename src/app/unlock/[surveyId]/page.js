@@ -100,37 +100,50 @@ export default function UnlockSurveyPage() {
     setErrorMsg("");
 
     try {
-      setStartingCheckout(true);
+       setStartingCheckout(true);
 
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        credentials: "include", 
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          surveyId,
-          successUrl: `${origin}/dashboard?surveyId=${surveyId}&unlocked=1`,
-          cancelUrl: `${origin}/dashboard?surveyId=${surveyId}`,
-        }),
-      });
+        // ✅ 1) Client-side auth guard (prevents 401 on server)
+        const {
+            data: { user },
+            error: authErr,
+        } = await supabase.auth.getUser();
 
-      const json = await res.json().catch(() => ({}));
+        if (authErr || !user) {
+            router.push(`/login?mode=login&next=/unlock/${surveyId}`);
+            return;
+        }
 
-      if (!res.ok) {
-        const msg = json?.error || "Checkout failed.";
-        throw new Error(msg);
-      }
+        // ✅ 2) Now call checkout (cookies will be present)
+        const res = await fetch("/api/checkout", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                surveyId,
+                successUrl: `${origin}/dashboard?surveyId=${surveyId}&unlocked=1`,
+                cancelUrl: `${origin}/dashboard?surveyId=${surveyId}`,
+            }),
+        });
 
-      const url = json?.url;
-      if (!url) throw new Error("Checkout session URL missing.");
+        const json = await res.json().catch(() => ({}));
 
-      window.location.href = url;
+        if (!res.ok) {
+            const msg = json?.error || "Checkout failed.";
+            throw new Error(msg);
+        }
+
+        const url = json?.url;
+        if (!url) throw new Error("Checkout session URL missing.");
+
+        window.location.href = url;
     } catch (err) {
-      console.error("CHECKOUT START ERROR:", err);
-      setErrorMsg(err?.message || "Checkout failed.");
+        console.error("CHECKOUT START ERROR:", err);
+        setErrorMsg(err?.message || "Checkout failed.");
     } finally {
-      setStartingCheckout(false);
+        setStartingCheckout(false);
     }
   }
+
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
