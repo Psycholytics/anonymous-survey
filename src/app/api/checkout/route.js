@@ -1,8 +1,9 @@
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
@@ -16,24 +17,22 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing surveyId" }, { status: 400 });
     }
 
-    const supabase = createSupabaseServerClient();
+    // ✅ Auth (server-side) using the ONE helper
+    const supabase = await supabaseServer();
+    const { data: userRes, error: userErr } = await supabase.auth.getUser();
+    const user = userRes?.user || null;
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    if (userErr || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: survey, error } = await supabase
+    const { data: survey, error: sErr } = await supabase
       .from("surveys")
       .select("id, owner_id, is_paid")
       .eq("id", surveyId)
       .single();
 
-    if (error || !survey) {
+    if (sErr || !survey) {
       return NextResponse.json({ error: "Survey not found" }, { status: 404 });
     }
 
@@ -59,11 +58,12 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
-      success_url: successUrl ?? `${origin}/dashboard?surveyId=${surveyId}&unlocked=1`,
+      success_url:
+        successUrl ?? `${origin}/dashboard?surveyId=${surveyId}&unlocked=1`,
       cancel_url: cancelUrl ?? `${origin}/unlock/${surveyId}`,
       metadata: {
-        survey_id: surveyId,
-        user_id: user.id,
+        survey_id: String(surveyId),
+        user_id: String(user.id),
       },
     });
 
@@ -71,7 +71,7 @@ export async function POST(req) {
   } catch (err) {
     console.error("CHECKOUT ERROR:", err);
     return NextResponse.json(
-      { error: err.message ?? "Internal server error" },
+      { error: err?.message || "Internal server error" },
       { status: 500 }
     );
   }

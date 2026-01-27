@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-export function createSupabaseServerClient() {
-  const cookieStore = cookies();
+export async function supabaseServer() {
+  const cookieStore = await cookies(); // <-- THIS is what fixes "t.get is not a function"
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -16,7 +16,7 @@ export function createSupabaseServerClient() {
           cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          cookieStore.set({ name, value: "", ...options });
+          cookieStore.set({ name, value: "", ...options, maxAge: 0 });
         },
       },
     }
