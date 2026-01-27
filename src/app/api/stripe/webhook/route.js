@@ -55,7 +55,9 @@ export async function POST(req) {
 
       if (error) {
         console.error("SUPABASE UPDATE ERROR:", error);
-        return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+        return NextResponse.json(
+            { error: "DB update failed", supabase: error }, 
+            { status: 500 });
       }
     }
 
