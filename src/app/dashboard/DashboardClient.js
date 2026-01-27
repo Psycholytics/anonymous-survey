@@ -369,7 +369,7 @@ export default function DashboardClient() {
       )}
 
       {/* HEADER */}
-      <header className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+      <header className="relative mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <a href="/" className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
           <div className="leading-tight">
@@ -380,13 +380,13 @@ export default function DashboardClient() {
           </div>
         </a>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
           {profile?.handle && (
             <a
               href={`/u/${profile.handle}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+              className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
             >
               View public profile
             </a>
@@ -399,7 +399,7 @@ export default function DashboardClient() {
               router.push("/create");
             }}
 
-            className="rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+            className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           >
             New survey
           </button>
