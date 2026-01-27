@@ -1,5 +1,11 @@
 // src/app/api/stripe/webhook/route.js
 
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
+
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
