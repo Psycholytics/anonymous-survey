@@ -2,25 +2,11 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
-
-function canStillUnlock(survey) {
-  if (!survey) return false;
-  if (survey.is_paid) return false;
-
-  const unlockDeadlineMs = survey.unlock_deadline
-    ? new Date(survey.unlock_deadline).getTime()
-    : survey.expires_at
-    ? new Date(survey.expires_at).getTime() + 30 * 24 * 60 * 60 * 1000
-    : null;
-
-  if (!unlockDeadlineMs) return true;
-  return Date.now() < unlockDeadlineMs;
-}
 
 export async function POST(req) {
   try {
@@ -30,22 +16,24 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing surveyId" }, { status: 400 });
     }
 
-    // ✅ Auth (server-side)
-    const supabase = supabaseServer(); // <- IMPORTANT: no await
-    const { data: userRes, error: userErr } = await supabase.auth.getUser();
-    const user = userRes?.user || null;
+    const supabase = createSupabaseServerClient();
 
-    if (userErr || !user) {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: survey, error: sErr } = await supabase
+    const { data: survey, error } = await supabase
       .from("surveys")
-      .select("id, owner_id, is_paid, expires_at, unlock_deadline, title")
+      .select("id, owner_id, is_paid")
       .eq("id", surveyId)
       .single();
 
-    if (sErr || !survey) {
+    if (error || !survey) {
       return NextResponse.json({ error: "Survey not found" }, { status: 404 });
     }
 
@@ -54,19 +42,10 @@ export async function POST(req) {
     }
 
     if (survey.is_paid) {
-      return NextResponse.json({ error: "Survey already unlocked" }, { status: 400 });
+      return NextResponse.json({ error: "Already unlocked" }, { status: 400 });
     }
 
-    if (!canStillUnlock(survey)) {
-      return NextResponse.json({ error: "Unlock window ended" }, { status: 400 });
-    }
-
-    const site = process.env.NEXT_PUBLIC_SITE_URL || new URL(req.url).origin;
-
-    const success =
-      successUrl || `${site}/dashboard?surveyId=${surveyId}&unlocked=1`;
-    const cancel =
-      cancelUrl || `${site}/unlock/${surveyId}`;
+    const origin = new URL(req.url).origin;
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -80,11 +59,11 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
-      success_url: success,
-      cancel_url: cancel,
+      success_url: successUrl ?? `${origin}/dashboard?surveyId=${surveyId}&unlocked=1`,
+      cancel_url: cancelUrl ?? `${origin}/unlock/${surveyId}`,
       metadata: {
-        survey_id: String(surveyId),
-        owner_id: String(user.id),
+        survey_id: surveyId,
+        user_id: user.id,
       },
     });
 
@@ -92,7 +71,7 @@ export async function POST(req) {
   } catch (err) {
     console.error("CHECKOUT ERROR:", err);
     return NextResponse.json(
-      { error: err?.message || "Internal server error" },
+      { error: err.message ?? "Internal server error" },
       { status: 500 }
     );
   }

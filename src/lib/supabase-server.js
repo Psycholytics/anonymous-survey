@@ -1,8 +1,7 @@
-// src/lib/supabaseServer.js
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-export function supabaseServer() {
+export function createSupabaseServerClient() {
   const cookieStore = cookies();
 
   return createServerClient(
@@ -14,15 +13,10 @@ export function supabaseServer() {
           return cookieStore.get(name)?.value;
         },
         set(name, value, options) {
-          // IMPORTANT: use the 3-arg signature (NOT an object)
-          try {
-            cookieStore.set(name, value, options);
-          } catch {}
+          cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          try {
-            cookieStore.set(name, "", { ...options, maxAge: 0 });
-          } catch {}
+          cookieStore.set({ name, value: "", ...options });
         },
       },
     }
