@@ -56,8 +56,8 @@ function canStillUnlockSurvey(survey) {
   const unlockDeadlineMs = survey.unlock_deadline
     ? new Date(survey.unlock_deadline).getTime()
     : survey.expires_at
-    ? new Date(survey.expires_at).getTime() + 30 * 24 * 60 * 60 * 1000
-    : null;
+      ? new Date(survey.expires_at).getTime() + 30 * 24 * 60 * 60 * 1000
+      : null;
 
   if (!unlockDeadlineMs) return true;
   return Date.now() < unlockDeadlineMs;
@@ -444,7 +444,7 @@ export default function DashboardClient() {
               href={`/u/${profile.handle}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+              className="w-full sm:w-auto h-11 inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 text-sm font-semibold leading-none text-gray-900 shadow-sm"
             >
               View public profile
             </a>
@@ -456,7 +456,7 @@ export default function DashboardClient() {
               sessionStorage.setItem("nav_from_dashboard", "1");
               router.push("/create");
             }}
-            className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+            className="w-full sm:w-auto h-11 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 text-sm font-semibold leading-none text-white shadow-sm hover:opacity-95"
           >
             New survey
           </button>
@@ -522,7 +522,7 @@ export default function DashboardClient() {
                             </span>
                           </div>
 
-                          {/* META LINE (separate so it doesn’t cram the title row) */}
+                          {/* META LINE */}
                           <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
                             <span>
                               {responseCount} response{responseCount === 1 ? "" : "s"}
@@ -557,7 +557,6 @@ export default function DashboardClient() {
                         {/* 3 DOT MENU */}
                         <div
                           onClick={(e) => {
-                            // prevent the global click handler from instantly closing it
                             e.stopPropagation();
                           }}
                         >
@@ -572,7 +571,7 @@ export default function DashboardClient() {
                         </div>
                       </div>
 
-                      {/* ACTIONS (mobile-friendly, not cramped) */}
+                      {/* ACTIONS */}
                       <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
                         <button
                           onClick={() => goToSurveyDetail(s.id)}
