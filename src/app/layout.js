@@ -4,6 +4,7 @@ import "./globals.css";
 export const viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 const geistSans = Geist({
@@ -32,5 +33,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
-
