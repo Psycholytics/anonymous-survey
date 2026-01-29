@@ -95,6 +95,51 @@ async function waitForPaid(
   return false;
 }
 
+/** 3-dot menu for each survey card */
+function CardMenu({ open, onToggle, onRename, onDelete }) {
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onToggle}
+        className={cx(
+          "inline-flex h-9 w-9 items-center justify-center rounded-2xl border bg-white shadow-sm",
+          "border-gray-200 text-gray-700 hover:bg-gray-50"
+        )}
+        aria-haspopup="menu"
+        aria-expanded={open ? "true" : "false"}
+        title="More"
+      >
+        <span className="text-xl leading-none">⋯</span>
+      </button>
+
+      {open && (
+        <div
+          className="absolute right-0 top-11 z-50 w-44 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg"
+          role="menu"
+        >
+          <button
+            type="button"
+            onClick={onRename}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Rename
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-red-600 hover:bg-red-50"
+            role="menuitem"
+          >
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -104,19 +149,19 @@ export default function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  // profile (handle)
   const [profile, setProfile] = useState(null);
 
-  // List state
   const [surveys, setSurveys] = useState([]);
 
-  // Detail state
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
   const PREVIEW_LIMIT = 5;
   const [expanded, setExpanded] = useState({});
   const [showCreatedToast, setShowCreatedToast] = useState(false);
+
+  // card menu state
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
     const created = searchParams.get("created");
@@ -128,6 +173,19 @@ export default function DashboardClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
+  // close card menu on outside click / scroll
+  useEffect(() => {
+    function close() {
+      setOpenMenuId(null);
+    }
+    window.addEventListener("click", close);
+    window.addEventListener("scroll", close, { passive: true });
+    return () => {
+      window.removeEventListener("click", close);
+      window.removeEventListener("scroll", close);
+    };
+  }, []);
+
   const origin = useMemo(() => {
     if (typeof window === "undefined") return "";
     return window.location.origin;
@@ -138,7 +196,6 @@ export default function DashboardClient() {
     return getExpiryMeta(survey.expires_at);
   }, [survey?.expires_at]);
 
-  // ✅ locked only when not paid
   const isLocked = useMemo(() => {
     if (!survey) return false;
     return !survey.is_paid;
@@ -173,7 +230,6 @@ export default function DashboardClient() {
       if (!alive) return;
       setUser(u);
 
-      // Load profile handle once
       const { data: prof, error: profErr } = await supabase
         .from("profiles")
         .select("handle")
@@ -196,7 +252,6 @@ export default function DashboardClient() {
       if (surveyId) {
         await loadDetail(u.id, surveyId);
 
-        // If returning from Stripe, wait for webhook to flip is_paid, then reload
         if (unlocked === "1") {
           const ok = await waitForPaid(surveyId);
           if (ok) await loadDetail(u.id, surveyId);
@@ -320,6 +375,7 @@ export default function DashboardClient() {
       return;
     }
 
+    setOpenMenuId(null);
     if (user?.id) await loadList();
   }
 
@@ -342,6 +398,8 @@ export default function DashboardClient() {
       alert(error.message || "Delete failed.");
       return;
     }
+
+    setOpenMenuId(null);
 
     if (surveyId === id) {
       router.push("/dashboard");
@@ -368,7 +426,7 @@ export default function DashboardClient() {
         </div>
       )}
 
-      {/* HEADER */}
+      {/* HEADER (mobile tightened) */}
       <header className="relative mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <a href="/" className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
@@ -398,7 +456,6 @@ export default function DashboardClient() {
               sessionStorage.setItem("nav_from_dashboard", "1");
               router.push("/create");
             }}
-
             className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           >
             New survey
@@ -406,7 +463,7 @@ export default function DashboardClient() {
         </div>
       </header>
 
-      <section className="relative mx-auto max-w-6xl px-6 pb-20">
+      <section className="relative mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         {loading ? (
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-gray-600">Loading…</p>
@@ -414,15 +471,11 @@ export default function DashboardClient() {
         ) : !surveyId ? (
           // LIST VIEW
           <div className="grid gap-4">
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h1 className="text-xl font-extrabold tracking-tight">My Surveys</h1>
-                  <p className="mt-1 text-sm text-gray-600">
-                    Click a survey to view responses + share link.
-                  </p>
-                </div>
-              </div>
+            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <h1 className="text-xl font-extrabold tracking-tight">My Surveys</h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Click a survey to view responses + share link.
+              </p>
             </div>
 
             {surveys.length === 0 ? (
@@ -443,89 +496,106 @@ export default function DashboardClient() {
                   const newCount = Number(s.new_count ?? 0);
                   const expiry = getExpiryMeta(s.expires_at);
                   const linkDisabled = expiry.isExpired;
-                  const deleteLabel =
-                    expiry.isExpired && !s.is_paid ? getDeletionCountdown(s.expires_at) : null;
 
                   return (
                     <div
                       key={s.id}
-                      className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm"
+                      className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5"
                     >
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <p className="truncate text-base font-extrabold text-gray-900">
-                            {s.title || "Untitled survey"}
-                          </p>
-
-                          <span
-                            className={cx(
-                              "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
-                              expiry.isExpired
-                                ? "border-gray-200 bg-gray-50 text-gray-600"
-                                : "border-green-200 bg-green-50 text-green-700"
-                            )}
-                          >
-                            {expiry.label}
-                          </span>
-
-                          <p className="mt-1 text-xs text-gray-500">
-                            {responseCount} response{responseCount === 1 ? "" : "s"}
-                            {newCount > 0 ? ` . ${newCount} new` : ""}
-                            {s.is_paid ? (
-                              <span className="ml-1 text-green-600 font-semibold">Unlocked</span>
-                            ) : (
-                              <span className="ml-1 text-gray-500 font-semibold">Locked</span>
-                            )}
-                          </p>
-
-                          {!s.is_paid && !canStillUnlockSurvey(s) && (
-                            <p className="mt-1 text-[11px] text-gray-400">
-                              Auto-deleted after unlock window
+                      {/* TOP ROW (title + badge + menu) */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <p className="truncate text-base font-extrabold text-gray-900">
+                              {s.title || "Untitled survey"}
                             </p>
-                          )}
-                        </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                          {newCount > 0 && (
-                            <span className="rounded-full bg-blue-600 px-3 py-2 text-sm font-extrabold text-white">
-                              +{newCount} new
+                            <span
+                              className={cx(
+                                "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
+                                expiry.isExpired
+                                  ? "border-gray-200 bg-gray-50 text-gray-600"
+                                  : "border-green-200 bg-green-50 text-green-700"
+                              )}
+                            >
+                              {expiry.label}
                             </span>
-                          )}
-                          <button
-                            onClick={() => goToSurveyDetail(s.id)}
-                            className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
-                          >
-                            Open
-                          </button>
+                          </div>
 
-                          <button
-                            onClick={() => {
-                              if (linkDisabled) return;
-                              copy(url);
-                            }}
-                            disabled={linkDisabled}
-                            className={cx(
-                              "rounded-2xl px-4 py-2 text-sm font-semibold shadow-sm",
-                              linkDisabled
-                                ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                                : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
+                          {/* META LINE (separate so it doesn’t cram the title row) */}
+                          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
+                            <span>
+                              {responseCount} response{responseCount === 1 ? "" : "s"}
+                            </span>
+
+                            {newCount > 0 && (
+                              <span className="rounded-full bg-blue-600 px-2 py-1 text-[11px] font-extrabold text-white">
+                                +{newCount} new
+                              </span>
                             )}
-                          >
-                            {linkDisabled ? "Expired" : "Copy link"}
-                          </button>
 
-                          <IconButton title="Rename" onClick={() => renameSurvey(s.id, s.title)}>
-                            ✏️
-                          </IconButton>
+                            {s.is_paid ? (
+                              <span className="font-semibold text-green-600">Unlocked</span>
+                            ) : (
+                              <span className="font-semibold text-gray-500">Locked</span>
+                            )}
 
-                          <IconButton
-                            title="Delete"
-                            danger
-                            onClick={() => deleteSurvey(s.id, s.title)}
-                          >
-                            ✕
-                          </IconButton>
+                            {!s.is_paid && !canStillUnlockSurvey(s) && (
+                              <span className="text-gray-400">
+                                Auto-deleted after unlock window
+                              </span>
+                            )}
+
+                            {expiry.isExpired && !s.is_paid && (
+                              <span className="text-gray-400">
+                                {getDeletionCountdown(s.expires_at)}
+                              </span>
+                            )}
+                          </div>
                         </div>
+
+                        {/* 3 DOT MENU */}
+                        <div
+                          onClick={(e) => {
+                            // prevent the global click handler from instantly closing it
+                            e.stopPropagation();
+                          }}
+                        >
+                          <CardMenu
+                            open={openMenuId === s.id}
+                            onToggle={() =>
+                              setOpenMenuId((prev) => (prev === s.id ? null : s.id))
+                            }
+                            onRename={() => renameSurvey(s.id, s.title)}
+                            onDelete={() => deleteSurvey(s.id, s.title)}
+                          />
+                        </div>
+                      </div>
+
+                      {/* ACTIONS (mobile-friendly, not cramped) */}
+                      <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
+                        <button
+                          onClick={() => goToSurveyDetail(s.id)}
+                          className="col-span-1 rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+                        >
+                          Open
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            if (linkDisabled) return;
+                            copy(url);
+                          }}
+                          disabled={linkDisabled}
+                          className={cx(
+                            "col-span-1 rounded-2xl px-4 py-2.5 text-sm font-semibold shadow-sm",
+                            linkDisabled
+                              ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
+                              : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
+                          )}
+                        >
+                          {linkDisabled ? "Expired" : "Copy link"}
+                        </button>
                       </div>
                     </div>
                   );
@@ -536,7 +606,6 @@ export default function DashboardClient() {
         ) : (
           // DETAIL VIEW
           <div className="grid gap-4">
-            {/* back button OUTSIDE the title card */}
             <div className="-mt-2">
               <button
                 onClick={() => router.push("/dashboard")}
@@ -546,7 +615,6 @@ export default function DashboardClient() {
               </button>
             </div>
 
-            {/* Title + status */}
             <div className="px-1 pt-2 pb-2">
               <div className="min-w-0">
                 <h1 className="truncate text-3xl font-extrabold tracking-tight text-gray-900">
@@ -566,8 +634,8 @@ export default function DashboardClient() {
                     </div>
                   )}
 
-                  {!survey?.is_paid && (
-                    canStillUnlockSurvey(survey) ? (
+                  {!survey?.is_paid &&
+                    (canStillUnlockSurvey(survey) ? (
                       <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm">
                         Unlock available (30 days)
                       </div>
@@ -575,8 +643,7 @@ export default function DashboardClient() {
                       <div className="rounded-full border border-gray-200 bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm">
                         Unlock window ended
                       </div>
-                    )
-                  )}
+                    ))}
 
                   {detailExpiry.isExpired && !survey?.is_paid && (
                     <div className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 shadow-sm">
@@ -601,8 +668,7 @@ export default function DashboardClient() {
               </div>
             </div>
 
-            {/* Responses */}
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h2 className="text-sm font-semibold text-gray-900">Responses</h2>
@@ -638,7 +704,6 @@ export default function DashboardClient() {
                                 {list.length}
                               </span>
                             </div>
-
 
                             <div className="mt-3 space-y-3">
                               {list.length === 0 ? (
@@ -680,7 +745,8 @@ export default function DashboardClient() {
                   {isLocked && canStillUnlockSurvey(survey) && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center">
                       <p className="text-xs font-semibold text-gray-700">
-                        {responses.length} response{responses.length === 1 ? "" : "s"} collected - unlock to read them
+                        {responses.length} response{responses.length === 1 ? "" : "s"} collected -
+                        unlock to read them
                       </p>
 
                       <button
