@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import ProfileTopBar from "@/components/ProfileTopBar";
 
 export default function PublicProfilePage() {
   const params = useParams();
@@ -59,6 +60,8 @@ export default function PublicProfilePage() {
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
+      <ProfileTopBar />
+      
       {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />

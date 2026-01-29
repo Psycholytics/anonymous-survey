@@ -8,24 +8,6 @@ function cx(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-function IconButton({ title, onClick, children, danger = false }) {
-  return (
-    <button
-      type="button"
-      title={title}
-      onClick={onClick}
-      className={cx(
-        "inline-flex h-9 w-9 items-center justify-center rounded-2xl border bg-white shadow-sm",
-        danger
-          ? "border-red-200 text-red-600 hover:bg-red-50"
-          : "border-gray-200 text-gray-700 hover:bg-gray-50"
-      )}
-    >
-      <span className="text-lg leading-none">{children}</span>
-    </button>
-  );
-}
-
 function getExpiryMeta(expiresAt) {
   if (!expiresAt) return { isExpired: false, label: "No expiry", sublabel: "" };
 
@@ -140,6 +122,78 @@ function CardMenu({ open, onToggle, onRename, onDelete }) {
   );
 }
 
+/** Header menu (top-right ☰) */
+function HeaderMenu({ open, onToggle, onClose, onProfile, onSettings, onLogout }) {
+  return (
+    <div className="relative" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={cx(
+          "inline-flex h-11 w-11 items-center justify-center rounded-2xl border bg-white shadow-sm",
+          "border-gray-200 text-gray-900 hover:bg-gray-50"
+        )}
+        aria-haspopup="menu"
+        aria-expanded={open ? "true" : "false"}
+        title="Menu"
+      >
+        <span className="text-xl leading-none">☰</span>
+      </button>
+
+      {open && (
+        <div
+          className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg"
+          role="menu"
+        >
+          <button
+            type="button"
+            onClick={() => {
+              onClose?.();
+              onProfile?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Profile
+            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
+              avatar, banner, public page
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onClose?.();
+              onSettings?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Account settings
+            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
+              email, password, username
+            </div>
+          </button>
+
+          <div className="h-px bg-gray-100" />
+
+          <button
+            type="button"
+            onClick={async () => {
+              onClose?.();
+              await onLogout?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-red-600 hover:bg-red-50"
+            role="menuitem"
+          >
+            Log out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -148,7 +202,6 @@ export default function DashboardClient() {
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-
   const [profile, setProfile] = useState(null);
 
   const [surveys, setSurveys] = useState([]);
@@ -156,12 +209,16 @@ export default function DashboardClient() {
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
+
   const PREVIEW_LIMIT = 5;
   const [expanded, setExpanded] = useState({});
   const [showCreatedToast, setShowCreatedToast] = useState(false);
 
   // card menu state
   const [openMenuId, setOpenMenuId] = useState(null);
+
+  // header menu state
+  const [openHeaderMenu, setOpenHeaderMenu] = useState(false);
 
   useEffect(() => {
     const created = searchParams.get("created");
@@ -173,16 +230,22 @@ export default function DashboardClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // close card menu on outside click / scroll
+  // close menus on outside click / scroll / escape
   useEffect(() => {
-    function close() {
+    function closeAll() {
       setOpenMenuId(null);
+      setOpenHeaderMenu(false);
     }
-    window.addEventListener("click", close);
-    window.addEventListener("scroll", close, { passive: true });
+    function onKey(e) {
+      if (e.key === "Escape") closeAll();
+    }
+    window.addEventListener("click", closeAll);
+    window.addEventListener("scroll", closeAll, { passive: true });
+    window.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("click", close);
-      window.removeEventListener("scroll", close);
+      window.removeEventListener("click", closeAll);
+      window.removeEventListener("scroll", closeAll);
+      window.removeEventListener("keydown", onKey);
     };
   }, []);
 
@@ -409,6 +472,22 @@ export default function DashboardClient() {
     await loadList();
   }
 
+  async function logout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
+  function goToProfile() {
+    if (!profile?.handle) return;
+    // flag for back button on profile page
+    sessionStorage.setItem("nav_from_dashboard", "1");
+    router.push(`/u/${profile.handle}`);
+  }
+
+  function goToSettings() {
+    router.push("/account"); // change this route if needed
+  }
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* background glow */}
@@ -426,7 +505,7 @@ export default function DashboardClient() {
         </div>
       )}
 
-      {/* HEADER (mobile tightened) */}
+      {/* HEADER */}
       <header className="relative mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <a href="/" className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
@@ -438,28 +517,26 @@ export default function DashboardClient() {
           </div>
         </a>
 
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
-          {profile?.handle && (
-            <a
-              href={`/u/${profile.handle}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto h-11 inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 text-sm font-semibold leading-none text-gray-900 shadow-sm"
-            >
-              View public profile
-            </a>
-          )}
-
+        <div className="flex w-full flex-row items-center justify-between gap-2 sm:w-auto sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={() => {
               sessionStorage.setItem("nav_from_dashboard", "1");
               router.push("/create");
             }}
-            className="w-full sm:w-auto h-11 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 text-sm font-semibold leading-none text-white shadow-sm hover:opacity-95"
+            className="h-11 flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 text-sm font-semibold leading-none text-white shadow-sm hover:opacity-95"
           >
             New survey
           </button>
+
+          <HeaderMenu
+            open={openHeaderMenu}
+            onToggle={() => setOpenHeaderMenu((v) => !v)}
+            onClose={() => setOpenHeaderMenu(false)}
+            onProfile={goToProfile}
+            onSettings={goToSettings}
+            onLogout={logout}
+          />
         </div>
       </header>
 
@@ -502,7 +579,6 @@ export default function DashboardClient() {
                       key={s.id}
                       className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5"
                     >
-                      {/* TOP ROW (title + badge + menu) */}
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 min-w-0">
@@ -522,7 +598,6 @@ export default function DashboardClient() {
                             </span>
                           </div>
 
-                          {/* META LINE */}
                           <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
                             <span>
                               {responseCount} response{responseCount === 1 ? "" : "s"}
@@ -554,12 +629,7 @@ export default function DashboardClient() {
                           </div>
                         </div>
 
-                        {/* 3 DOT MENU */}
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
+                        <div onClick={(e) => e.stopPropagation()}>
                           <CardMenu
                             open={openMenuId === s.id}
                             onToggle={() =>
@@ -571,7 +641,6 @@ export default function DashboardClient() {
                         </div>
                       </div>
 
-                      {/* ACTIONS */}
                       <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
                         <button
                           onClick={() => goToSurveyDetail(s.id)}
@@ -603,7 +672,7 @@ export default function DashboardClient() {
             )}
           </div>
         ) : (
-          // DETAIL VIEW
+          // DETAIL VIEW (unchanged from your current version)
           <div className="grid gap-4">
             <div className="-mt-2">
               <button
