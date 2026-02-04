@@ -28,7 +28,15 @@ function isValidEmail(email) {
 }
 
 /** Header menu (top-right ☰) */
-function HeaderMenu({ open, onToggle, onClose, onDashboard, onProfile, onAccount, onLogout, }) {
+function HeaderMenu({
+  open,
+  onToggle,
+  onClose,
+  onDashboard,
+  onProfile,
+  onAccount,
+  onLogout,
+}) {
   return (
     <div className="relative" onClick={(e) => e.stopPropagation()}>
       <button
@@ -47,14 +55,14 @@ function HeaderMenu({ open, onToggle, onClose, onDashboard, onProfile, onAccount
 
       {open && (
         <div
-          className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg"
+          className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg"
           role="menu"
         >
           <button
             type="button"
             onClick={() => {
               onClose?.();
-              onDashboard?.();
+              onProfile?.();
             }}
             className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
             role="menuitem"
@@ -68,39 +76,42 @@ function HeaderMenu({ open, onToggle, onClose, onDashboard, onProfile, onAccount
           <button
             type="button"
             onClick={() => {
-                onClose?.();
-                onAccount?.();
+              onClose?.();
+              onAccount?.();
             }}
             className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
             role="menuitem"
           >
             Account settings
             <div className="mt-0.5 text-[11px] font-medium text-gray-500">
-                username, email, password
-            </div>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-                onClose?.();
-                onDashboard?.();
-            }}
-            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
-            role="menuitem"
-          >
-            Dashboard
-            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
-                back to my surveys
+              username, email, password
             </div>
           </button>
 
           <button
             type="button"
             onClick={() => {
-                onClose?.();
-                onLogout?.();
+              onClose?.();
+              onDashboard?.();
             }}
             className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Dashboard
+            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
+              back to my surveys
+            </div>
+          </button>
+
+          <div className="h-px bg-gray-200" />
+
+          <button
+            type="button"
+            onClick={() => {
+              onClose?.();
+              onLogout?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-red-600 hover:bg-red-50 focus:bg-red-50"
             role="menuitem"
           >
             Log out
@@ -158,6 +169,11 @@ export default function AccountPage() {
   function showToast(type, text) {
     setToast({ type, text });
     setTimeout(() => setToast(null), 2500);
+  }
+
+  async function doLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
   }
 
   // close menu on outside click / escape
@@ -358,11 +374,6 @@ export default function AccountPage() {
     setEditPassword(false);
   }
 
-  async function doLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-  }
-
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* background glow */}
@@ -400,7 +411,6 @@ export default function AccountPage() {
         </a>
 
         <div className="flex w-full flex-row items-center justify-end gap-2 sm:w-auto sm:gap-3">
-          {/* ✅ simple back arrow (NO box) */}
           <button
             type="button"
             onClick={() => router.push("/dashboard")}
@@ -416,7 +426,7 @@ export default function AccountPage() {
             onToggle={() => setOpenHeaderMenu((v) => !v)}
             onClose={() => setOpenHeaderMenu(false)}
             onDashboard={() => router.push("/dashboard")}
-            onAccount={() => router.refresh()} // already on /account -> refresh
+            onAccount={() => router.refresh()}
             onProfile={() => router.push(`/u/${profile?.handle || ""}`)}
             onLogout={doLogout}
           />
@@ -453,7 +463,12 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="mt-4">
-                  <label className="text-xs font-semibold text-gray-700">
+                  {/* ✅ current value (read-only) */}
+                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
+                    Current: @{profile?.handle || "—"}
+                  </div>
+
+                  <label className="mt-4 block text-xs font-semibold text-gray-700">
                     New username
                   </label>
                   <input
@@ -527,7 +542,12 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="mt-4">
-                  <label className="text-xs font-semibold text-gray-700">
+                  {/* ✅ current value (read-only) */}
+                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
+                    Current: {user?.email || "—"}
+                  </div>
+
+                  <label className="mt-4 block text-xs font-semibold text-gray-700">
                     New email
                   </label>
                   <input
@@ -594,6 +614,11 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="mt-4 grid gap-3">
+                  {/* ✅ current value (read-only) */}
+                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
+                    Current: ••••••••
+                  </div>
+
                   <div>
                     <label className="text-xs font-semibold text-gray-700">
                       New password
