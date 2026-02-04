@@ -490,12 +490,6 @@ export default function DashboardClient() {
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      {vwDebug && (
-        <div className="sticky top-0 z-[9999] border-b border-red-200 bg-red-50 px-3 py-2 text-[11px] font-semibold text-red-700">
-          innerWidth: {vwDebug.innerWidth} . clientWidth: {vwDebug.clientWidth} . scrollWidth: {vwDebug.scrollWidth}
-        </div>
-      )}
-
       {/* background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
