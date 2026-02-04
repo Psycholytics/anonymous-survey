@@ -220,26 +220,6 @@ export default function DashboardClient() {
   // header menu state
   const [openHeaderMenu, setOpenHeaderMenu] = useState(false);
 
-  // Temp DEBUG: show what width iphone thinks the page is
-  const [vwDebug, setVwDebug] = useState(null);
-
-  useEffect(() => {
-    function measure() {
-      setVwDebug({
-        innerWidth: window.innerWidth,
-        clientWidth: document.documentElement.clientWidth,
-        scrollWidth: document.body.scrollWidth,
-      });
-    }
-    measure();
-    window.addEventListener("resize", measure);
-    window.addEventListener("orientationchange", measure);
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.removeEventListener("orientationchange", measure);
-    };
-  }, []);
-
   useEffect(() => {
     const created = searchParams.get("created");
     if (created === "1") {
@@ -515,12 +495,13 @@ export default function DashboardClient() {
           innerWidth: {vwDebug.innerWidth} . clientWidth: {vwDebug.clientWidth} . scrollWidth: {vwDebug.scrollWidth}
         </div>
       )}
-      {/* background glow *
+
+      {/* background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
         <div className="absolute top-28 right-[-140px] h-[560px] w-[560px] rounded-full bg-purple-500/10 blur-[110px]" />
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
-      </div> 8=*/}
+      </div> 8=
 
       {showCreatedToast && (
         <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2">
