@@ -2,19 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
-export default function ProfileTopBar() {
+export default function ProfileTopBar({ profileUserId }) {
   const router = useRouter();
   const [showBack, setShowBack] = useState(false);
 
   useEffect(() => {
-    try {
-      const fromDash = sessionStorage.getItem("nav_from_dashboard") === "1";
-      setShowBack(fromDash);
-    } catch {
-      setShowBack(false);
+    async function check() {
+      const fromDash =
+        typeof window !== "undefined" &&
+        sessionStorage.getItem("nav_from_dashboard") === "1";
+
+      const { data } = await supabase.auth.getUser();
+      const me = data?.user;
+
+      if (fromDash || (me && me.id === profileUserId)) {
+        setShowBack(true);
+      }
     }
-  }, []);
+
+    check();
+  }, [profileUserId]);
 
   if (!showBack) return null;
 
