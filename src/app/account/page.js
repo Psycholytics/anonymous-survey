@@ -354,22 +354,23 @@ export default function AccountPage() {
         </a>
 
         <div className="flex w-full flex-row items-center justify-end gap-2 sm:w-auto sm:gap-3">
-            <button
-                type="button"
-                onClick={() => router.push("/dashboard")}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-900 shadow-sm hover:bg-gray-50"
-                title="Back"
-                aria-label="Back"
-            >
-                <span className="text-xl leading-none"></span>
-            </button>
+          {/* ✅ simple back arrow (NO box) */}
+          <button
+            type="button"
+            onClick={() => router.push("/dashboard")}
+            className="p-1 text-gray-900 hover:opacity-60"
+            title="Back"
+            aria-label="Back"
+          >
+            <span className="text-3xl font-semibold leading-none">←</span>
+          </button>
 
-            <HeaderMenu
-                open={openHeaderMenu}
-                onToggle={() => setOpenHeaderMenu((v) => !v)}
-                onClose={() => setOpenHeaderMenu(false)}
-                onDashboard={() => router.push("/dashboard")}
-            />
+          <HeaderMenu
+            open={openHeaderMenu}
+            onToggle={() => setOpenHeaderMenu((v) => !v)}
+            onClose={() => setOpenHeaderMenu(false)}
+            onDashboard={() => router.push("/dashboard")}
+          />
         </div>
       </header>
 
@@ -414,12 +415,16 @@ export default function AccountPage() {
                   />
 
                   <div className="mt-2 text-[11px] font-medium text-gray-500">
-                    Preview: <span className="font-semibold">@{normalizedHandle || "—"}</span>
+                    Preview:{" "}
+                    <span className="font-semibold">
+                      @{normalizedHandle || "—"}
+                    </span>
                   </div>
 
                   {!normalizedHandle || !isValidHandle(normalizedHandle) ? (
                     <div className="mt-2 text-[11px] font-semibold text-red-600">
-                      Must be 3–20 chars. Letters/numbers/underscore. Can’t start with “_”.
+                      Must be 3–20 chars. Letters/numbers/underscore. Can’t start
+                      with “_”.
                     </div>
                   ) : null}
 
