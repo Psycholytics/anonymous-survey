@@ -28,7 +28,7 @@ function isValidEmail(email) {
 }
 
 /** Header menu (top-right ☰) */
-function HeaderMenu({ open, onToggle, onClose, onDashboard }) {
+function HeaderMenu({ open, onToggle, onClose, onDashboard, onProfile, onAccount, onLogout, }) {
   return (
     <div className="relative" onClick={(e) => e.stopPropagation()}>
       <button
@@ -59,10 +59,51 @@ function HeaderMenu({ open, onToggle, onClose, onDashboard }) {
             className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
             role="menuitem"
           >
+            Profile
+            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
+              view my public page
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+                onClose?.();
+                onAccount?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Account settings
+            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
+                username, email, password
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+                onClose?.();
+                onDashboard?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
             Dashboard
             <div className="mt-0.5 text-[11px] font-medium text-gray-500">
-              back to my surveys
+                back to my surveys
             </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+                onClose?.();
+                onLogout?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Log out
           </button>
         </div>
       )}
@@ -317,6 +358,11 @@ export default function AccountPage() {
     setEditPassword(false);
   }
 
+  async function doLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* background glow */}
@@ -370,6 +416,9 @@ export default function AccountPage() {
             onToggle={() => setOpenHeaderMenu((v) => !v)}
             onClose={() => setOpenHeaderMenu(false)}
             onDashboard={() => router.push("/dashboard")}
+            onAccount={() => router.refresh()} // already on /account -> refresh
+            onProfile={() => router.push(`/u/${profile?.handle || ""}`)}
+            onLogout={doLogout}
           />
         </div>
       </header>
