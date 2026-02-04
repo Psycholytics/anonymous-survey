@@ -353,21 +353,23 @@ export default function AccountPage() {
           </div>
         </a>
 
-        <div className="flex w-full flex-row items-center justify-between gap-2 sm:w-auto sm:justify-end sm:gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/dashboard")}
-            className="h-11 flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
-          >
-            Back
-          </button>
+        <div className="flex w-full flex-row items-center justify-end gap-2 sm:w-auto sm:gap-3">
+            <button
+                type="button"
+                onClick={() => router.push("/dashboard")}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-900 shadow-sm hover:bg-gray-50"
+                title="Back"
+                aria-label="Back"
+            >
+                <span className="text-xl leading-none"></span>
+            </button>
 
-          <HeaderMenu
-            open={openHeaderMenu}
-            onToggle={() => setOpenHeaderMenu((v) => !v)}
-            onClose={() => setOpenHeaderMenu(false)}
-            onDashboard={() => router.push("/dashboard")}
-          />
+            <HeaderMenu
+                open={openHeaderMenu}
+                onToggle={() => setOpenHeaderMenu((v) => !v)}
+                onClose={() => setOpenHeaderMenu(false)}
+                onDashboard={() => router.push("/dashboard")}
+            />
         </div>
       </header>
 
