@@ -490,12 +490,12 @@ export default function DashboardClient() {
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      {/* background glow */}
+      {/* background glow *
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
         <div className="absolute top-28 right-[-140px] h-[560px] w-[560px] rounded-full bg-purple-500/10 blur-[110px]" />
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
-      </div>
+      </div> 8=*/}
 
       {showCreatedToast && (
         <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2">
