@@ -506,7 +506,7 @@ export default function DashboardClient() {
       )}
 
       {/* HEADER */}
-      <header className="relative mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
+      <header className="relative mx-auto flex max-w-full sm:max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <a href="/" className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
           <div className="leading-tight">
@@ -540,7 +540,7 @@ export default function DashboardClient() {
         </div>
       </header>
 
-      <section className="relative mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+      <section className="relative mx-auto max-w-full sm:max-w-6xl px-4 pb-20 sm:px-6">
         {loading ? (
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-gray-600">Loading…</p>
