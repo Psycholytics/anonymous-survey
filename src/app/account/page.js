@@ -505,7 +505,8 @@ export default function AccountPage() {
 
       {/* HEADER */}
       <header className="relative mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
-        <a href="/" className="flex items-center gap-3">
+        {/* ✅ not clickable anymore */}
+        <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
           <div className="leading-tight">
             <div className="text-sm font-extrabold tracking-tight">Account</div>
@@ -513,7 +514,7 @@ export default function AccountPage() {
               username, email, password
             </div>
           </div>
-        </a>
+        </div>
 
         <div className="flex w-full flex-row items-center justify-end gap-2 sm:w-auto sm:gap-3">
           <button
@@ -772,7 +773,6 @@ export default function AccountPage() {
                       placeholder="********"
                     />
 
-                    {/* ✅ inline password rules */}
                     <div className="mt-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
                       <div className="mb-2 text-[11px] font-extrabold text-gray-700">
                         Password must include:
