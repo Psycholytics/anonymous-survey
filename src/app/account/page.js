@@ -151,7 +151,7 @@ export default function AccountPage() {
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
 
-  // form values
+  // form values (NEW inputs)
   const [handleInput, setHandleInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
 
@@ -220,8 +220,9 @@ export default function AccountPage() {
       if (!alive) return;
       setProfile(prof || null);
 
-      setHandleInput(prof?.handle || "");
-      setEmailInput(u.email || "");
+      // ✅ IMPORTANT: do NOT prefill the "new" inputs with current values
+      setHandleInput("");
+      setEmailInput("");
 
       setLoading(false);
     }
@@ -307,6 +308,7 @@ export default function AccountPage() {
 
       setProfile((p) => ({ ...(p || {}), handle: next }));
       setEditHandle(false);
+      setHandleInput(""); // ✅ clear "new" box after save
       showToast("ok", "Username updated.");
     } finally {
       setSavingHandle(false);
@@ -328,8 +330,8 @@ export default function AccountPage() {
         return;
       }
 
-      // Supabase usually requires email confirmation — so we show a helpful success
       setEditEmail(false);
+      setEmailInput(""); // ✅ clear "new" box after save
       showToast("ok", "Check your email to confirm the change.");
     } finally {
       setSavingEmail(false);
@@ -359,12 +361,12 @@ export default function AccountPage() {
   }
 
   function cancelHandle() {
-    setHandleInput(profile?.handle || "");
+    setHandleInput(""); // ✅ keep "new" empty
     setEditHandle(false);
   }
 
   function cancelEmail() {
-    setEmailInput(user?.email || "");
+    setEmailInput(""); // ✅ keep "new" empty
     setEditEmail(false);
   }
 
@@ -453,7 +455,12 @@ export default function AccountPage() {
                 </div>
 
                 {!editHandle && (
-                  <PencilButton onClick={() => setEditHandle(true)} />
+                  <PencilButton
+                    onClick={() => {
+                      setHandleInput(""); // ✅ NEW starts empty
+                      setEditHandle(true);
+                    }}
+                  />
                 )}
               </div>
 
@@ -463,7 +470,6 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="mt-4">
-                  {/* ✅ current value (read-only) */}
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
                     Current: @{profile?.handle || "—"}
                   </div>
@@ -532,7 +538,12 @@ export default function AccountPage() {
                 </div>
 
                 {!editEmail && (
-                  <PencilButton onClick={() => setEditEmail(true)} />
+                  <PencilButton
+                    onClick={() => {
+                      setEmailInput(""); // ✅ NEW starts empty
+                      setEditEmail(true);
+                    }}
+                  />
                 )}
               </div>
 
@@ -542,7 +553,6 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="mt-4">
-                  {/* ✅ current value (read-only) */}
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
                     Current: {user?.email || "—"}
                   </div>
@@ -614,7 +624,6 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="mt-4 grid gap-3">
-                  {/* ✅ current value (read-only) */}
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
                     Current: ••••••••
                   </div>
