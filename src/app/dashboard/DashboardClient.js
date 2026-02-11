@@ -479,13 +479,12 @@ export default function DashboardClient() {
 
   function goToProfile() {
     if (!profile?.handle) return;
-    // flag for back button on profile page
     sessionStorage.setItem("nav_from_dashboard", "1");
     router.push(`/u/${profile.handle}`);
   }
 
   function goToSettings() {
-    router.push("/account"); // change this route if needed
+    router.push("/account");
   }
 
   return (
@@ -495,7 +494,7 @@ export default function DashboardClient() {
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
         <div className="absolute top-28 right-[-140px] h-[560px] w-[560px] rounded-full bg-purple-500/10 blur-[110px]" />
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
-      </div> 8=
+      </div>
 
       {showCreatedToast && (
         <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2">
@@ -507,7 +506,8 @@ export default function DashboardClient() {
 
       {/* HEADER */}
       <header className="relative mx-auto flex max-w-full sm:max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
-        <a href="/" className="flex items-center gap-3">
+        {/* ✅ not clickable anymore */}
+        <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
           <div className="leading-tight">
             <div className="text-sm font-extrabold tracking-tight">Dashboard</div>
@@ -515,7 +515,7 @@ export default function DashboardClient() {
               {surveyId ? "Survey detail" : "My surveys"}
             </div>
           </div>
-        </a>
+        </div>
 
         <div className="flex w-full flex-row items-center justify-between gap-2 sm:w-auto sm:justify-end sm:gap-3">
           <button
