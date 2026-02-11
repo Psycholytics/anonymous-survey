@@ -12,31 +12,14 @@ export default function HomePage() {
       <header className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
-
-          {/* Brand */}
-          <div className="leading-tight">
-            <div className="text-sm font-extrabold tracking-tight">
-              Tell Me What You Really Think
-            </div>
-            <div className="text-[11px] text-gray-500">
-              Anonymous feedback • Shareable link
-            </div>
-          </div>
         </div>
 
         <nav className="flex items-center gap-3">
           <a
             href="/login?mode=login&next=/dashboard"
-            className="rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+            className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 whitespace-nowrap leading-none"
           >
             Log in
-          </a>
-
-          <a
-            href="/login?mode=signup&next=/create"
-            className="rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
-          >
-            Create a survey
           </a>
         </nav>
       </header>
@@ -45,12 +28,7 @@ export default function HomePage() {
       <section className="relative mx-auto max-w-6xl px-6 pt-10 pb-12">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-700 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-blue-500" />
-              Anonymous feedback that feels effortless
-            </div>
-
-            <h1 className="mt-5 text-4xl font-extrabold tracking-tight sm:text-5xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
               Tell Me What You Really Think.
               <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Anonymous feedback in seconds.
