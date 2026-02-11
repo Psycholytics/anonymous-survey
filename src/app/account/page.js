@@ -27,6 +27,23 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
 }
 
+// ✅ password rules (adjust if your Create page uses different ones)
+function passwordChecks(pw) {
+  const s = String(pw || "");
+  return {
+    len: s.length >= 8,
+    upper: /[A-Z]/.test(s),
+    lower: /[a-z]/.test(s),
+    number: /[0-9]/.test(s),
+    special: /[^A-Za-z0-9]/.test(s),
+  };
+}
+
+function allPasswordRulesPass(pw) {
+  const c = passwordChecks(pw);
+  return c.len && c.upper && c.lower && c.number && c.special;
+}
+
 /** Header menu (top-right ☰) */
 function HeaderMenu({
   open,
@@ -163,7 +180,7 @@ export default function AccountPage() {
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
-  // ✅ live username availability state
+  // live username availability state
   // "idle" | "checking" | "available" | "taken" | "invalid" | "same" | "error"
   const [handleAvail, setHandleAvail] = useState("idle");
 
@@ -243,7 +260,7 @@ export default function AccountPage() {
     [handleInput]
   );
 
-  // ✅ live availability check (debounced)
+  // live availability check (debounced)
   useEffect(() => {
     let cancelled = false;
 
@@ -292,7 +309,6 @@ export default function AccountPage() {
         return;
       }
 
-      // if it exists but it's me, treat as "same"
       if (existing?.user_id && existing.user_id === user?.id) {
         setHandleAvail("same");
         return;
@@ -312,8 +328,8 @@ export default function AccountPage() {
     if (!editHandle) return false;
     if (!normalizedHandle) return false;
     if (!isValidHandle(normalizedHandle)) return false;
-    if ((profile?.handle || "") === normalizedHandle) return false; // no-op
-    if (handleAvail !== "available") return false; // ✅ must be available
+    if ((profile?.handle || "") === normalizedHandle) return false;
+    if (handleAvail !== "available") return false;
     return true;
   }, [editHandle, normalizedHandle, profile?.handle, handleAvail]);
 
@@ -322,16 +338,18 @@ export default function AccountPage() {
     const next = String(emailInput || "").trim().toLowerCase();
     if (!next) return false;
     if (!isValidEmail(next)) return false;
-    if ((user?.email || "").toLowerCase() === next) return false; // no-op
+    if ((user?.email || "").toLowerCase() === next) return false;
     return true;
   }, [editEmail, emailInput, user?.email]);
+
+  const pwRules = useMemo(() => passwordChecks(pw1), [pw1]);
 
   const passwordIsValid = useMemo(() => {
     if (!editPassword) return false;
     const a = String(pw1 || "");
     const b = String(pw2 || "");
-    if (a.length < 8) return false;
-    if (a !== b) return false;
+    if (!allPasswordRulesPass(a)) return false; // ✅ rules
+    if (a !== b) return false; // ✅ match
     return true;
   }, [editPassword, pw1, pw2]);
 
@@ -344,7 +362,6 @@ export default function AccountPage() {
     try {
       const next = normalizedHandle;
 
-      // ensure handle is unique (server-side safety check)
       const { data: existing, error: checkErr } = await supabase
         .from("profiles")
         .select("user_id")
@@ -448,6 +465,20 @@ export default function AccountPage() {
     setEditPassword(false);
   }
 
+  function RuleLine({ ok, children }) {
+    return (
+      <div
+        className={cx(
+          "text-[11px] font-semibold",
+          ok ? "text-green-700" : "text-gray-500"
+        )}
+      >
+        {ok ? "✓ " : "• "}
+        {children}
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* background glow */}
@@ -502,7 +533,7 @@ export default function AccountPage() {
             onDashboard={() => router.push("/dashboard")}
             onAccount={() => router.refresh()}
             onProfile={() => router.push(`/u/${profile?.handle || ""}`)}
-            onLogout={doLogout}
+            onLogout={() => doLogout()}
           />
         </div>
       </header>
@@ -553,7 +584,7 @@ export default function AccountPage() {
                   <input
                     value={handleInput}
                     onChange={(e) => setHandleInput(e.target.value)}
-                    placeholder="e.g. al_thegoat"
+                    placeholder="new_username"
                     className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
                   />
 
@@ -565,7 +596,6 @@ export default function AccountPage() {
                       </span>
                     </div>
 
-                    {/* ✅ live availability indicator */}
                     {handleAvail === "checking" && (
                       <div className="text-[11px] font-semibold text-gray-500">
                         Checking…
@@ -711,7 +741,7 @@ export default function AccountPage() {
                     Password
                   </h2>
                   <p className="mt-1 text-xs text-gray-500">
-                    Minimum 8 characters.
+                    Use a strong password.
                   </p>
                 </div>
 
@@ -741,6 +771,20 @@ export default function AccountPage() {
                       className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
                       placeholder="********"
                     />
+
+                    {/* ✅ inline password rules */}
+                    <div className="mt-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
+                      <div className="mb-2 text-[11px] font-extrabold text-gray-700">
+                        Password must include:
+                      </div>
+                      <div className="grid gap-1">
+                        <RuleLine ok={pwRules.len}>At least 8 characters</RuleLine>
+                        <RuleLine ok={pwRules.upper}>An uppercase letter</RuleLine>
+                        <RuleLine ok={pwRules.lower}>A lowercase letter</RuleLine>
+                        <RuleLine ok={pwRules.number}>A number</RuleLine>
+                        <RuleLine ok={pwRules.special}>A special character</RuleLine>
+                      </div>
+                    </div>
                   </div>
 
                   <div>
@@ -755,12 +799,6 @@ export default function AccountPage() {
                       placeholder="********"
                     />
                   </div>
-
-                  {editPassword && pw1 && pw1.length < 8 ? (
-                    <div className="text-[11px] font-semibold text-red-600">
-                      Password must be at least 8 characters.
-                    </div>
-                  ) : null}
 
                   {editPassword && pw1 && pw2 && pw1 !== pw2 ? (
                     <div className="text-[11px] font-semibold text-red-600">
