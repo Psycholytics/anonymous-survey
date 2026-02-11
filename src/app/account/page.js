@@ -163,6 +163,10 @@ export default function AccountPage() {
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
+  // ✅ live username availability state
+  // "idle" | "checking" | "available" | "taken" | "invalid" | "same" | "error"
+  const [handleAvail, setHandleAvail] = useState("idle");
+
   // messages
   const [toast, setToast] = useState(null); // {type:"ok"|"err", text:""}
 
@@ -220,7 +224,7 @@ export default function AccountPage() {
       if (!alive) return;
       setProfile(prof || null);
 
-      // ✅ IMPORTANT: do NOT prefill the "new" inputs with current values
+      // keep NEW inputs empty by default
       setHandleInput("");
       setEmailInput("");
 
@@ -239,13 +243,79 @@ export default function AccountPage() {
     [handleInput]
   );
 
+  // ✅ live availability check (debounced)
+  useEffect(() => {
+    let cancelled = false;
+
+    async function check() {
+      if (!editHandle) {
+        setHandleAvail("idle");
+        return;
+      }
+
+      const current = profile?.handle || "";
+      const next = normalizedHandle;
+
+      if (!next) {
+        setHandleAvail("idle");
+        return;
+      }
+
+      if (!isValidHandle(next)) {
+        setHandleAvail("invalid");
+        return;
+      }
+
+      if (next === current) {
+        setHandleAvail("same");
+        return;
+      }
+
+      setHandleAvail("checking");
+
+      const { data: existing, error } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("handle", next)
+        .maybeSingle();
+
+      if (cancelled) return;
+
+      if (error) {
+        console.error("HANDLE AVAIL ERROR:", error);
+        setHandleAvail("error");
+        return;
+      }
+
+      if (!existing) {
+        setHandleAvail("available");
+        return;
+      }
+
+      // if it exists but it's me, treat as "same"
+      if (existing?.user_id && existing.user_id === user?.id) {
+        setHandleAvail("same");
+        return;
+      }
+
+      setHandleAvail("taken");
+    }
+
+    const t = setTimeout(check, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [editHandle, normalizedHandle, profile?.handle, user?.id]);
+
   const handleIsValid = useMemo(() => {
     if (!editHandle) return false;
     if (!normalizedHandle) return false;
     if (!isValidHandle(normalizedHandle)) return false;
     if ((profile?.handle || "") === normalizedHandle) return false; // no-op
+    if (handleAvail !== "available") return false; // ✅ must be available
     return true;
-  }, [editHandle, normalizedHandle, profile?.handle]);
+  }, [editHandle, normalizedHandle, profile?.handle, handleAvail]);
 
   const emailIsValid = useMemo(() => {
     if (!editEmail) return false;
@@ -274,7 +344,7 @@ export default function AccountPage() {
     try {
       const next = normalizedHandle;
 
-      // ensure handle is unique (simple check)
+      // ensure handle is unique (server-side safety check)
       const { data: existing, error: checkErr } = await supabase
         .from("profiles")
         .select("user_id")
@@ -308,7 +378,8 @@ export default function AccountPage() {
 
       setProfile((p) => ({ ...(p || {}), handle: next }));
       setEditHandle(false);
-      setHandleInput(""); // ✅ clear "new" box after save
+      setHandleInput("");
+      setHandleAvail("idle");
       showToast("ok", "Username updated.");
     } finally {
       setSavingHandle(false);
@@ -331,7 +402,7 @@ export default function AccountPage() {
       }
 
       setEditEmail(false);
-      setEmailInput(""); // ✅ clear "new" box after save
+      setEmailInput("");
       showToast("ok", "Check your email to confirm the change.");
     } finally {
       setSavingEmail(false);
@@ -361,12 +432,13 @@ export default function AccountPage() {
   }
 
   function cancelHandle() {
-    setHandleInput(""); // ✅ keep "new" empty
+    setHandleInput("");
+    setHandleAvail("idle");
     setEditHandle(false);
   }
 
   function cancelEmail() {
-    setEmailInput(""); // ✅ keep "new" empty
+    setEmailInput("");
     setEditEmail(false);
   }
 
@@ -457,7 +529,8 @@ export default function AccountPage() {
                 {!editHandle && (
                   <PencilButton
                     onClick={() => {
-                      setHandleInput(""); // ✅ NEW starts empty
+                      setHandleInput("");
+                      setHandleAvail("idle");
                       setEditHandle(true);
                     }}
                   />
@@ -484,11 +557,40 @@ export default function AccountPage() {
                     className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
                   />
 
-                  <div className="mt-2 text-[11px] font-medium text-gray-500">
-                    Preview:{" "}
-                    <span className="font-semibold">
-                      @{normalizedHandle || "—"}
-                    </span>
+                  <div className="mt-2 flex items-center justify-between gap-3">
+                    <div className="text-[11px] font-medium text-gray-500">
+                      Preview:{" "}
+                      <span className="font-semibold">
+                        @{normalizedHandle || "—"}
+                      </span>
+                    </div>
+
+                    {/* ✅ live availability indicator */}
+                    {handleAvail === "checking" && (
+                      <div className="text-[11px] font-semibold text-gray-500">
+                        Checking…
+                      </div>
+                    )}
+                    {handleAvail === "available" && (
+                      <div className="text-[11px] font-semibold text-green-700">
+                        Available ✅
+                      </div>
+                    )}
+                    {handleAvail === "taken" && (
+                      <div className="text-[11px] font-semibold text-red-600">
+                        Not available ❌
+                      </div>
+                    )}
+                    {handleAvail === "same" && (
+                      <div className="text-[11px] font-semibold text-gray-500">
+                        Same as current
+                      </div>
+                    )}
+                    {handleAvail === "error" && (
+                      <div className="text-[11px] font-semibold text-red-600">
+                        Couldn’t check
+                      </div>
+                    )}
                   </div>
 
                   {!normalizedHandle || !isValidHandle(normalizedHandle) ? (
@@ -540,7 +642,7 @@ export default function AccountPage() {
                 {!editEmail && (
                   <PencilButton
                     onClick={() => {
-                      setEmailInput(""); // ✅ NEW starts empty
+                      setEmailInput("");
                       setEditEmail(true);
                     }}
                   />
