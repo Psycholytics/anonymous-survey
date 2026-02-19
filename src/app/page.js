@@ -8,35 +8,37 @@ export default function HomePage() {
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
       </div>
 
-      {/* Sticky brand bar (minimal grey) */}
-      <header className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          {/* Left: emblem (swap this div with your logo later) */}
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+      {/* Sticky Brand Bar */}
+      <header className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/90 backdrop-blur-md">
+        <div className="relative mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
+          
+          {/* Left: Emblem (replace with real logo later) */}
+          <div className="flex items-center">
+            <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
           </div>
 
-          {/* Center: site name */}
+          {/* Center: Psychelytics */}
           <div className="absolute left-1/2 -translate-x-1/2">
-            <div className="text-sm font-semibold tracking-tight text-gray-500">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Psychelytics
             </div>
           </div>
 
-          {/* Right: login (single line) */}
-          <nav className="flex items-center">
+          {/* Right: Login */}
+          <nav>
             <a
               href="/login?mode=login&next=/dashboard"
-              className="inline-flex h-10 items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 whitespace-nowrap leading-none"
+              className="inline-flex h-11 items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 whitespace-nowrap"
             >
               Log in
             </a>
           </nav>
+
         </div>
       </header>
 
       {/* Hero */}
-      <section className="relative mx-auto max-w-6xl px-6 pt-10 pb-12">
+      <section className="relative mx-auto max-w-6xl px-6 pt-16 pb-12">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
@@ -81,7 +83,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* iMessage-style preview */}
+          {/* Preview Card */}
           <div className="relative">
             <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -133,39 +135,6 @@ export default function HomePage() {
 
             <div className="pointer-events-none absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-500/15 to-purple-500/15 blur-2xl" />
           </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how" className="relative mx-auto max-w-6xl px-6 pb-20">
-        <h2 className="text-2xl font-bold">How it works</h2>
-        <p className="mt-2 max-w-2xl text-sm text-gray-600">
-          Three steps. No friction.
-        </p>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            { title: "1) Create", desc: "Write your questions and publish your survey." },
-            { title: "2) Share", desc: "Post your link to TikTok, IG, X, or group chats." },
-            { title: "3) Collect", desc: "Watch responses come in anonymously." },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
-            >
-              <p className="text-sm font-semibold">{item.title}</p>
-              <p className="mt-2 text-sm text-gray-600">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-10">
-          <a
-            href="/login?mode=signup&next=/create"
-            className="inline-flex rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
-          >
-            Create your survey
-          </a>
         </div>
       </section>
 
