@@ -505,29 +505,18 @@ export default function DashboardClient() {
       )}
 
       {/* HEADER */}
-      <header className="relative mx-auto flex max-w-full sm:max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
-        {/* ✅ not clickable anymore */}
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
-          <div className="leading-tight">
-            <div className="text-sm font-extrabold tracking-tight">Dashboard</div>
-            <div className="text-[11px] text-gray-500">
-              {surveyId ? "Survey detail" : "My surveys"}
+      <header className="relative mx-auto max-w-full sm:max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
+        {/* Top row: title left, hamburger right */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+            <div className="leading-tight">
+              <div className="text-sm font-extrabold tracking-tight">Dashboard</div>
+              <div className="text-[11px] text-gray-500">
+                {surveyId ? "Survey detail" : "My surveys"}
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="flex w-full flex-row items-center justify-between gap-2 sm:w-auto sm:justify-end sm:gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              sessionStorage.setItem("nav_from_dashboard", "1");
-              router.push("/create");
-            }}
-            className="h-11 flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 text-sm font-semibold leading-none text-white shadow-sm hover:opacity-95"
-          >
-            New survey
-          </button>
 
           <HeaderMenu
             open={openHeaderMenu}
@@ -538,7 +527,27 @@ export default function DashboardClient() {
             onLogout={logout}
           />
         </div>
+
+        {/* Second row: better New Survey button */}
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => {
+              sessionStorage.setItem("nav_from_dashboard", "1");
+              router.push("/create");
+            }}
+            className={cx(
+              "w-full inline-flex items-center justify-center",
+              "h-12 rounded-3xl px-5 text-sm font-extrabold text-white shadow-sm",
+              "bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-95",
+              "active:scale-[0.99] transition"
+            )}
+          >
+            New survey
+          </button>
+        </div>
       </header>
+
 
       <section className="relative mx-auto max-w-full sm:max-w-6xl px-4 pb-20 sm:px-6">
         {loading ? (
