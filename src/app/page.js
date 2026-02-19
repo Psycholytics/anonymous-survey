@@ -8,20 +8,31 @@ export default function HomePage() {
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
       </div>
 
-      {/* Header */}
-      <header className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
-        </div>
+      {/* Sticky brand bar (minimal grey) */}
+      <header className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/80 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          {/* Left: emblem (swap this div with your logo later) */}
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+          </div>
 
-        <nav className="flex items-center gap-3">
-          <a
-            href="/login?mode=login&next=/dashboard"
-            className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 whitespace-nowrap leading-none"
-          >
-            Log in
-          </a>
-        </nav>
+          {/* Center: site name */}
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <div className="text-sm font-semibold tracking-tight text-gray-500">
+              Psychelytics
+            </div>
+          </div>
+
+          {/* Right: login (single line) */}
+          <nav className="flex items-center">
+            <a
+              href="/login?mode=login&next=/dashboard"
+              className="inline-flex h-10 items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 whitespace-nowrap leading-none"
+            >
+              Log in
+            </a>
+          </nav>
+        </div>
       </header>
 
       {/* Hero */}
@@ -158,10 +169,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer (no tech stack callout) */}
+      {/* Footer */}
       <footer className="relative border-t border-gray-200">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} Tell Me What You Really Think</p>
+          <p>© {new Date().getFullYear()} Psychelytics</p>
           <p>Privacy-first feedback</p>
         </div>
       </footer>
