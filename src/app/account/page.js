@@ -18,16 +18,13 @@ function normalizeHandle(raw) {
 }
 
 function isValidHandle(handle) {
-  // 3-20 chars, letters/numbers/underscore, cannot start with underscore
   return /^[a-z0-9][a-z0-9_]{2,19}$/.test(handle);
 }
 
 function isValidEmail(email) {
-  // basic + safe check; Supabase will also validate
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
 }
 
-// ✅ password rules (adjust if your Create page uses different ones)
 function passwordChecks(pw) {
   const s = String(pw || "");
   return {
@@ -197,11 +194,10 @@ export default function AccountPage() {
   const [savingPassword, setSavingPassword] = useState(false);
 
   // live username availability state
-  // "idle" | "checking" | "available" | "taken" | "invalid" | "same" | "error"
   const [handleAvail, setHandleAvail] = useState("idle");
 
   // messages
-  const [toast, setToast] = useState(null); // {type:"ok"|"err", text:""}
+  const [toast, setToast] = useState(null);
 
   function showToast(type, text) {
     setToast({ type, text });
@@ -213,7 +209,6 @@ export default function AccountPage() {
     router.push("/");
   }
 
-  // close menu on outside click / escape
   useEffect(() => {
     function closeAll() {
       setOpenHeaderMenu(false);
@@ -256,8 +251,6 @@ export default function AccountPage() {
 
       if (!alive) return;
       setProfile(prof || null);
-
-      // keep NEW inputs empty by default
       setHandleInput("");
       setEmailInput("");
 
@@ -270,13 +263,11 @@ export default function AccountPage() {
     };
   }, [router]);
 
-  // ===== validity =====
   const normalizedHandle = useMemo(
     () => normalizeHandle(handleInput),
     [handleInput]
   );
 
-  // live availability check (debounced)
   useEffect(() => {
     let cancelled = false;
 
@@ -364,12 +355,11 @@ export default function AccountPage() {
     if (!editPassword) return false;
     const a = String(pw1 || "");
     const b = String(pw2 || "");
-    if (!allPasswordRulesPass(a)) return false; // ✅ rules
-    if (a !== b) return false; // ✅ match
+    if (!allPasswordRulesPass(a)) return false;
+    if (a !== b) return false;
     return true;
   }, [editPassword, pw1, pw2]);
 
-  // ===== actions =====
   async function saveHandle() {
     if (!user?.id) return;
     if (!handleIsValid) return;
@@ -377,24 +367,6 @@ export default function AccountPage() {
     setSavingHandle(true);
     try {
       const next = normalizedHandle;
-
-      const { data: existing, error: checkErr } = await supabase
-        .from("profiles")
-        .select("user_id")
-        .eq("handle", next)
-        .maybeSingle();
-
-      if (checkErr) {
-        console.error(checkErr);
-        showToast("err", "Could not check username.");
-        return;
-      }
-
-      if (existing?.user_id && existing.user_id !== user.id) {
-        showToast("err", "That username is taken.");
-        return;
-      }
-
       const { error: upErr } = await supabase
         .from("profiles")
         .update({
@@ -404,7 +376,6 @@ export default function AccountPage() {
         .eq("user_id", user.id);
 
       if (upErr) {
-        console.error(upErr);
         showToast("err", upErr.message || "Failed to update username.");
         return;
       }
@@ -425,11 +396,9 @@ export default function AccountPage() {
     setSavingEmail(true);
     try {
       const next = String(emailInput || "").trim();
-
       const { error } = await supabase.auth.updateUser({ email: next });
 
       if (error) {
-        console.error(error);
         showToast("err", error.message || "Email update failed.");
         return;
       }
@@ -450,7 +419,6 @@ export default function AccountPage() {
       const { error } = await supabase.auth.updateUser({ password: pw1 });
 
       if (error) {
-        console.error(error);
         showToast("err", error.message || "Password update failed.");
         return;
       }
@@ -497,7 +465,6 @@ export default function AccountPage() {
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      {/* background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
         <div className="absolute top-28 right-[-140px] h-[560px] w-[560px] rounded-full bg-purple-500/10 blur-[110px]" />
@@ -519,22 +486,14 @@ export default function AccountPage() {
         </div>
       )}
 
-      {/* HEADER (buttons pinned top-right + subtitle changed) */}
+      {/* HEADER: Cleaned as requested */}
       <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
-          <div className="grid grid-cols-[1fr_auto] items-start gap-3">
-            {/* Left */}
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
-              <div className="leading-tight">
-                <div className="text-sm font-extrabold tracking-tight">
-                  Account
-                </div>
-                <div className="text-[11px] text-gray-500">Account settings</div>
-              </div>
-            </div>
+          <div className="flex items-center justify-between">
+            {/* Emblem Only */}
+            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
 
-            {/* Right: top-right buttons */}
+            {/* Two buttons Only */}
             <div className="flex justify-end gap-2">
               <HeaderIconButton
                 title="Back to dashboard"
@@ -557,300 +516,152 @@ export default function AccountPage() {
         </div>
       </header>
 
-      <section className="relative mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+      {/* Main Section with mt-8 spacing */}
+      <section className="relative mx-auto max-w-6xl px-4 pb-20 mt-8 sm:px-6">
         {loading ? (
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-gray-600">Loading…</p>
           </div>
         ) : (
-          <div className="grid gap-4">
-            {/* Username */}
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="text-sm font-extrabold tracking-tight text-gray-900">
-                    Username
-                  </h2>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Your public handle (letters, numbers, underscore).
-                  </p>
-                </div>
+          <>
+            {/* Account Settings Title in Bold */}
+            <h1 className="mb-6 text-sm font-extrabold tracking-tight text-gray-900">
+              Account Settings
+            </h1>
 
-                {!editHandle && (
-                  <PencilButton
-                    onClick={() => {
-                      setHandleInput("");
-                      setHandleAvail("idle");
-                      setEditHandle(true);
-                    }}
-                  />
-                )}
-              </div>
-
-              {!editHandle ? (
-                <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
-                  @{profile?.handle || "—"}
-                </div>
-              ) : (
-                <div className="mt-4">
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
-                    Current: @{profile?.handle || "—"}
+            <div className="grid gap-4">
+              {/* Username Card */}
+              <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-extrabold tracking-tight text-gray-900">
+                      Username
+                    </h2>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Your public handle (letters, numbers, underscore).
+                    </p>
                   </div>
+                  {!editHandle && (
+                    <PencilButton
+                      onClick={() => {
+                        setHandleInput("");
+                        setHandleAvail("idle");
+                        setEditHandle(true);
+                      }}
+                    />
+                  )}
+                </div>
 
-                  <label className="mt-4 block text-xs font-semibold text-gray-700">
-                    New username
-                  </label>
-                  <input
-                    value={handleInput}
-                    onChange={(e) => setHandleInput(e.target.value)}
-                    placeholder="new_username"
-                    className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
-                  />
-
-                  <div className="mt-2 flex items-center justify-between gap-3">
-                    <div className="text-[11px] font-medium text-gray-500">
-                      Preview:{" "}
-                      <span className="font-semibold">
-                        @{normalizedHandle || "—"}
-                      </span>
+                {!editHandle ? (
+                  <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
+                    @{profile?.handle || "—"}
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
+                      Current: @{profile?.handle || "—"}
                     </div>
-
-                    {handleAvail === "checking" && (
-                      <div className="text-[11px] font-semibold text-gray-500">
-                        Checking…
-                      </div>
-                    )}
-                    {handleAvail === "available" && (
-                      <div className="text-[11px] font-semibold text-green-700">
-                        Available ✅
-                      </div>
-                    )}
-                    {handleAvail === "taken" && (
-                      <div className="text-[11px] font-semibold text-red-600">
-                        Not available ❌
-                      </div>
-                    )}
-                    {handleAvail === "same" && (
-                      <div className="text-[11px] font-semibold text-gray-500">
-                        Same as current
-                      </div>
-                    )}
-                    {handleAvail === "error" && (
-                      <div className="text-[11px] font-semibold text-red-600">
-                        Couldn’t check
-                      </div>
-                    )}
-                  </div>
-
-                  {!normalizedHandle || !isValidHandle(normalizedHandle) ? (
-                    <div className="mt-2 text-[11px] font-semibold text-red-600">
-                      Must be 3–20 chars. Letters/numbers/underscore. Can’t start
-                      with “_”.
-                    </div>
-                  ) : null}
-
-                  <div className="mt-4 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={saveHandle}
-                      disabled={!handleIsValid || savingHandle}
-                      className={cx(
-                        "inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold shadow-sm",
-                        !handleIsValid || savingHandle
-                          ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                          : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
-                      )}
-                    >
-                      {savingHandle ? "Saving…" : "Save username"}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={cancelHandle}
-                      className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Email */}
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="text-sm font-extrabold tracking-tight text-gray-900">
-                    Email
-                  </h2>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Changing email may require confirmation.
-                  </p>
-                </div>
-
-                {!editEmail && (
-                  <PencilButton
-                    onClick={() => {
-                      setEmailInput("");
-                      setEditEmail(true);
-                    }}
-                  />
-                )}
-              </div>
-
-              {!editEmail ? (
-                <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
-                  {user?.email || "—"}
-                </div>
-              ) : (
-                <div className="mt-4">
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">
-                    Current: {user?.email || "—"}
-                  </div>
-
-                  <label className="mt-4 block text-xs font-semibold text-gray-700">
-                    New email
-                  </label>
-                  <input
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    placeholder="you@example.com"
-                    inputMode="email"
-                    className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
-                  />
-
-                  {emailInput && !isValidEmail(emailInput) ? (
-                    <div className="mt-2 text-[11px] font-semibold text-red-600">
-                      Enter a valid email address.
-                    </div>
-                  ) : null}
-
-                  <div className="mt-4 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={saveEmail}
-                      disabled={!emailIsValid || savingEmail}
-                      className={cx(
-                        "inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold shadow-sm",
-                        !emailIsValid || savingEmail
-                          ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                          : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
-                      )}
-                    >
-                      {savingEmail ? "Saving…" : "Save email"}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={cancelEmail}
-                      className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="text-sm font-extrabold tracking-tight text-gray-900">
-                    Password
-                  </h2>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Use a strong password.
-                  </p>
-                </div>
-
-                {!editPassword && (
-                  <PencilButton onClick={() => setEditPassword(true)} />
-                )}
-              </div>
-
-              {!editPassword ? (
-                <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-500">
-                  ••••••••
-                </div>
-              ) : (
-                <div className="mt-4 grid gap-3">
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
-                    Current: ••••••••
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-gray-700">
-                      New password
+                    <label className="mt-4 block text-xs font-semibold text-gray-700">
+                      New username
                     </label>
                     <input
-                      type="password"
-                      value={pw1}
-                      onChange={(e) => setPw1(e.target.value)}
+                      value={handleInput}
+                      onChange={(e) => setHandleInput(e.target.value)}
+                      placeholder="new_username"
                       className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
-                      placeholder="********"
                     />
+                    <div className="mt-2 flex items-center justify-between gap-3">
+                      <div className="text-[11px] font-medium text-gray-500">
+                        Preview: <span className="font-semibold">@{normalizedHandle || "—"}</span>
+                      </div>
+                      {handleAvail === "checking" && <div className="text-[11px] font-semibold text-gray-500">Checking…</div>}
+                      {handleAvail === "available" && <div className="text-[11px] font-semibold text-green-700">Available ✅</div>}
+                      {handleAvail === "taken" && <div className="text-[11px] font-semibold text-red-600">Not available ❌</div>}
+                      {handleAvail === "same" && <div className="text-[11px] font-semibold text-gray-500">Same as current</div>}
+                    </div>
+                    <div className="mt-4 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={saveHandle}
+                        disabled={!handleIsValid || savingHandle}
+                        className={cx(
+                          "inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold shadow-sm",
+                          !handleIsValid || savingHandle
+                            ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
+                            : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
+                        )}
+                      >
+                        {savingHandle ? "Saving…" : "Save username"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={cancelHandle}
+                        className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
+              {/* Email Card */}
+              <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-extrabold tracking-tight text-gray-900">Email</h2>
+                    <p className="mt-1 text-xs text-gray-500">Changing email may require confirmation.</p>
+                  </div>
+                  {!editEmail && <PencilButton onClick={() => { setEmailInput(""); setEditEmail(true); }} />}
+                </div>
+                {!editEmail ? (
+                  <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">{user?.email || "—"}</div>
+                ) : (
+                  <div className="mt-4">
+                    <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-900">Current: {user?.email || "—"}</div>
+                    <label className="mt-4 block text-xs font-semibold text-gray-700">New email</label>
+                    <input value={emailInput} onChange={(e) => setEmailInput(e.target.value)} placeholder="you@example.com" className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none" />
+                    <div className="mt-4 flex items-center gap-2">
+                      <button type="button" onClick={saveEmail} disabled={!emailIsValid || savingEmail} className={cx("rounded-2xl px-5 py-3 text-sm font-semibold", !emailIsValid || savingEmail ? "bg-gray-100 text-gray-400" : "bg-gradient-to-r from-blue-500 to-purple-600 text-white")}>Save email</button>
+                      <button type="button" onClick={cancelEmail} className="rounded-2xl border border-gray-200 px-5 py-3 text-sm font-semibold">Cancel</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Password Card */}
+              <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-extrabold tracking-tight text-gray-900">Password</h2>
+                    <p className="mt-1 text-xs text-gray-500">Use a strong password.</p>
+                  </div>
+                  {!editPassword && <PencilButton onClick={() => setEditPassword(true)} />}
+                </div>
+                {!editPassword ? (
+                  <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-500">••••••••</div>
+                ) : (
+                  <div className="mt-4 grid gap-3">
+                    <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">Current: ••••••••</div>
+                    <input type="password" value={pw1} onChange={(e) => setPw1(e.target.value)} placeholder="New password" className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none" />
                     <div className="mt-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
-                      <div className="mb-2 text-[11px] font-extrabold text-gray-700">
-                        Password must include:
-                      </div>
-                      <div className="grid gap-1">
-                        <RuleLine ok={pwRules.len}>At least 8 characters</RuleLine>
-                        <RuleLine ok={pwRules.upper}>An uppercase letter</RuleLine>
-                        <RuleLine ok={pwRules.lower}>A lowercase letter</RuleLine>
-                        <RuleLine ok={pwRules.number}>A number</RuleLine>
-                        <RuleLine ok={pwRules.special}>A special character</RuleLine>
-                      </div>
+                      <div className="mb-2 text-[11px] font-extrabold text-gray-700">Password must include:</div>
+                      <RuleLine ok={pwRules.len}>At least 8 characters</RuleLine>
+                      <RuleLine ok={pwRules.upper}>An uppercase letter</RuleLine>
+                      <RuleLine ok={pwRules.lower}>A lowercase letter</RuleLine>
+                      <RuleLine ok={pwRules.number}>A number</RuleLine>
+                      <RuleLine ok={pwRules.special}>A special character</RuleLine>
+                    </div>
+                    <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Confirm password" className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none" />
+                    <div className="mt-1 flex items-center gap-2">
+                      <button type="button" onClick={savePassword} disabled={!passwordIsValid || savingPassword} className={cx("rounded-2xl px-5 py-3 text-sm font-semibold", !passwordIsValid || savingPassword ? "bg-gray-100 text-gray-400" : "bg-gradient-to-r from-blue-500 to-purple-600 text-white")}>Save password</button>
+                      <button type="button" onClick={cancelPassword} className="rounded-2xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">Cancel</button>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-gray-700">
-                      Confirm password
-                    </label>
-                    <input
-                      type="password"
-                      value={pw2}
-                      onChange={(e) => setPw2(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none focus:border-gray-300"
-                      placeholder="********"
-                    />
-                  </div>
-
-                  {editPassword && pw1 && pw2 && pw1 !== pw2 ? (
-                    <div className="text-[11px] font-semibold text-red-600">
-                      Passwords do not match.
-                    </div>
-                  ) : null}
-
-                  <div className="mt-1 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={savePassword}
-                      disabled={!passwordIsValid || savingPassword}
-                      className={cx(
-                        "inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold shadow-sm",
-                        !passwordIsValid || savingPassword
-                          ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                          : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
-                      )}
-                    >
-                      {savingPassword ? "Saving…" : "Save password"}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={cancelPassword}
-                      className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </section>
     </main>
