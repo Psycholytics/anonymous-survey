@@ -38,24 +38,32 @@ export default function LoginClient() {
 
   // "Username" (stored in profiles.handle)
   const [handle, setHandle] = useState("");
-
   const [handleError, setHandleError] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  // ✅ reset password UI state
+  const [resetSending, setResetSending] = useState(false);
+  const [resetMsg, setResetMsg] = useState("");
 
   useEffect(() => {
     setMode(initialMode);
   }, [initialMode]);
 
   useEffect(() => {
+    // clear reset message when mode changes
+    setResetMsg("");
+  }, [mode]);
+
+  useEffect(() => {
     if (!handle) {
-        setHandleError("");
-        return;
+      setHandleError("");
+      return;
     }
 
     if (!/^[a-zA-Z0-9_]*$/.test(handle)) {
-        setHandleError("Only letters, numbers, and underscores allowed.");
-        return;
+      setHandleError("Only letters, numbers, and underscores allowed.");
+      return;
     }
 
     setHandleError("");
@@ -124,12 +132,40 @@ export default function LoginClient() {
     return { ok: true };
   }
 
+  // ✅ forgot password handler
+  async function sendReset() {
+    setResetMsg("");
+
+    const cleanEmail = String(email || "").trim();
+    if (!cleanEmail) {
+      setResetMsg("Enter your email above first.");
+      return;
+    }
+
+    setResetSending(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+
+      if (error) {
+        console.error("RESET ERROR:", error);
+        setResetMsg(error.message || "Could not send reset email.");
+        return;
+      }
+
+      setResetMsg("✅ Check your email for the reset link.");
+    } finally {
+      setResetSending(false);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!email || !password) return;
 
     if (mode === "signup" && handleError) {
-        return;
+      return;
     }
 
     const desiredHandle = normalizeHandle(handle);
@@ -203,7 +239,6 @@ export default function LoginClient() {
           router.push(`/login?mode=login&next=${encodeURIComponent(nextUrl)}`);
           return;
         }
-
       } else {
         // LOGIN
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -218,7 +253,6 @@ export default function LoginClient() {
         if (u?.id) {
           const ensured = await ensureProfileForUser(u.id, null);
           if (!ensured.ok) {
-            // Safety fallback (should basically never happen if signup requires username)
             router.push(`/claim-handle?next=${encodeURIComponent(nextUrl)}`);
             return;
           }
@@ -288,9 +322,10 @@ export default function LoginClient() {
             {mode === "signup" && (
               <div>
                 <label className="text-sm font-semibold text-gray-800">Username</label>
-                <div className={`mt-2 flex items-center rounded-2xl border bg-white p-3 shadow-sm focus-within:border-purple-300 ${
+                <div
+                  className={`mt-2 flex items-center rounded-2xl border bg-white p-3 shadow-sm focus-within:border-purple-300 ${
                     handleError ? "border-red-400" : "border-gray-200"
-                }`}
+                  }`}
                 >
                   <span className="text-sm text-gray-500">@</span>
                   <input
@@ -306,9 +341,7 @@ export default function LoginClient() {
                 </p>
 
                 {handleError && (
-                    <p className="mt-1 text-xs text-red-500">
-                        {handleError}
-                    </p>
+                  <p className="mt-1 text-xs text-red-500">{handleError}</p>
                 )}
               </div>
             )}
@@ -335,6 +368,26 @@ export default function LoginClient() {
                 type="password"
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
               />
+
+              {/* ✅ Forgot password (login mode only) */}
+              {mode === "login" && (
+                <div className="mt-2 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={sendReset}
+                    disabled={resetSending}
+                    className="text-xs font-semibold text-blue-600 hover:underline disabled:opacity-60"
+                  >
+                    {resetSending ? "Sending..." : "Forgot your password?"}
+                  </button>
+
+                  {resetMsg && (
+                    <div className="text-[11px] font-semibold text-gray-600">
+                      {resetMsg}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <button
