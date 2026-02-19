@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useEffect } from "react";
 
 const ToastCtx = createContext(null);
 
@@ -43,6 +44,10 @@ function ToastItem({ t, onClose }) {
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const timersRef = useRef(new Map());
+
+  useEffect(() => {
+    console.log("ToastProvider mounted");
+  }, []);
 
   const remove = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
