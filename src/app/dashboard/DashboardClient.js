@@ -411,13 +411,16 @@ export default function DashboardClient() {
   }
 
   async function copy(text) {
+    success("Toast test fired."); // TEMP
     try {
       await navigator.clipboard.writeText(text);
-      success("Link copied!");
-    } catch {
-      error("Couldn't copy link.");
+      success("Link copied.");
+    } catch (e) {
+      console.log("COPY ERROR:", e);
+      error("Couldn’t copy link.");
     }
   }
+
 
   async function renameSurvey(id, currentTitle) {
     const next = prompt("Rename survey:", currentTitle || "");
