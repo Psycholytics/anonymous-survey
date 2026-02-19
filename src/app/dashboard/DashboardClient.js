@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/toast/ToastProvider";
 
 function cx(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -220,6 +221,8 @@ export default function DashboardClient() {
   // header menu state
   const [openHeaderMenu, setOpenHeaderMenu] = useState(false);
 
+  const { success, error } = useToast
+
   useEffect(() => {
     const created = searchParams.get("created");
     if (created === "1") {
@@ -410,9 +413,9 @@ export default function DashboardClient() {
   async function copy(text) {
     try {
       await navigator.clipboard.writeText(text);
-      alert("Copied!");
+      success("Link copied!");
     } catch {
-      alert("Copy failed");
+      error("Couldn't copy link.");
     }
   }
 
