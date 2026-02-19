@@ -18,13 +18,16 @@ function normalizeHandle(raw) {
 }
 
 function isValidHandle(handle) {
+  // 3-20 chars, letters/numbers/underscore, cannot start with underscore
   return /^[a-z0-9][a-z0-9_]{2,19}$/.test(handle);
 }
 
 function isValidEmail(email) {
+  // basic + safe check; Supabase will also validate
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
 }
 
+// ✅ password rules (adjust if your Create page uses different ones)
 function passwordChecks(pw) {
   const s = String(pw || "");
   return {
@@ -136,19 +139,6 @@ function HeaderMenu({
   );
 }
 
-function PencilButton({ onClick, title = "Edit" }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-700 shadow-sm hover:bg-gray-50"
-    >
-      <span className="text-lg leading-none">✎</span>
-    </button>
-  );
-}
-
 function HeaderIconButton({ title, onClick, children }) {
   return (
     <button
@@ -165,6 +155,19 @@ function HeaderIconButton({ title, onClick, children }) {
   );
 }
 
+function PencilButton({ onClick, title = "Edit" }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-700 shadow-sm hover:bg-gray-50"
+    >
+      <span className="text-lg leading-none">✎</span>
+    </button>
+  );
+}
+
 export default function AccountPage() {
   const router = useRouter();
 
@@ -173,25 +176,32 @@ export default function AccountPage() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
 
+  // header menu
   const [openHeaderMenu, setOpenHeaderMenu] = useState(false);
 
+  // edit modes
   const [editHandle, setEditHandle] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
 
+  // form values (NEW inputs)
   const [handleInput, setHandleInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
 
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
 
+  // saving states
   const [savingHandle, setSavingHandle] = useState(false);
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
+  // live username availability state
+  // "idle" | "checking" | "available" | "taken" | "invalid" | "same" | "error"
   const [handleAvail, setHandleAvail] = useState("idle");
 
-  const [toast, setToast] = useState(null);
+  // messages
+  const [toast, setToast] = useState(null); // {type:"ok"|"err", text:""}
 
   function showToast(type, text) {
     setToast({ type, text });
@@ -203,6 +213,7 @@ export default function AccountPage() {
     router.push("/");
   }
 
+  // close menu on outside click / escape
   useEffect(() => {
     function closeAll() {
       setOpenHeaderMenu(false);
@@ -246,6 +257,7 @@ export default function AccountPage() {
       if (!alive) return;
       setProfile(prof || null);
 
+      // keep NEW inputs empty by default
       setHandleInput("");
       setEmailInput("");
 
@@ -258,11 +270,13 @@ export default function AccountPage() {
     };
   }, [router]);
 
+  // ===== validity =====
   const normalizedHandle = useMemo(
     () => normalizeHandle(handleInput),
     [handleInput]
   );
 
+  // live availability check (debounced)
   useEffect(() => {
     let cancelled = false;
 
@@ -350,11 +364,12 @@ export default function AccountPage() {
     if (!editPassword) return false;
     const a = String(pw1 || "");
     const b = String(pw2 || "");
-    if (!allPasswordRulesPass(a)) return false;
-    if (a !== b) return false;
+    if (!allPasswordRulesPass(a)) return false; // ✅ rules
+    if (a !== b) return false; // ✅ match
     return true;
   }, [editPassword, pw1, pw2]);
 
+  // ===== actions =====
   async function saveHandle() {
     if (!user?.id) return;
     if (!handleIsValid) return;
@@ -504,24 +519,23 @@ export default function AccountPage() {
         </div>
       )}
 
-      {/* HEADER (sticky like dashboard) */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="relative mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* HEADER (buttons pinned top-right + subtitle changed) */}
+      <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
+          <div className="grid grid-cols-[1fr_auto] items-start gap-3">
+            {/* Left */}
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
               <div className="leading-tight">
                 <div className="text-sm font-extrabold tracking-tight">
                   Account
                 </div>
-                <div className="text-[11px] text-gray-500">
-                  username, email, password
-                </div>
+                <div className="text-[11px] text-gray-500">Account settings</div>
               </div>
             </div>
 
-            <div className="flex w-full flex-row items-center justify-end gap-2 sm:w-auto sm:gap-3">
-              {/* Back button matches hamburger style */}
+            {/* Right: top-right buttons */}
+            <div className="flex justify-end gap-2">
               <HeaderIconButton
                 title="Back to dashboard"
                 onClick={() => router.push("/dashboard")}
