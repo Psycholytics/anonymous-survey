@@ -256,183 +256,120 @@ export default function CreatePage() {
         </button>
       </header>
 
-      <section className="relative mx-auto max-w-4xl px-6 pb-20 pt-4">
-        <div className="grid gap-6 lg:grid-cols-5">
-          {/* Left: form card */}
-          <div className="lg:col-span-3">
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl font-extrabold tracking-tight">
-                    Create your survey
-                  </h1>
-                  <p className="mt-2 text-sm text-gray-600">
-                    Keep it short. The best surveys feel easy to answer.
-                  </p>
-                </div>
-              </div>
+      <section className="relative mx-auto max-w-6xl px-4 sm:px-6 pb-20 pt-4">
+        <div className="grid gap-8 lg:grid-cols-12">
 
-              <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-                {/* Title */}
-                <div>
-                  <label className="text-sm font-semibold text-gray-800">
-                    Survey title{" "}
-                    <span className="font-normal text-gray-500">(optional)</span>
+          {/* LEFT: THE BUILDER - Full width on mobile, 7/12 on desktop */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="rounded-[32px] sm:rounded-[40px] border border-gray-200 bg-white p-5 sm:p-8 shadow-xl shadow-gray-200/50">
+              <header className="mb-8">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">Create Survey</h1>
+                <p className="mt-2 text-sm font-medium text-gray-500">Keep it short for more responses.</p>
+              </header>
+
+              <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+                {/* Title Input */}
+                <div className="group">
+                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
+                    Survey Title <span className="font-medium lowercase opacity-60">(optional)</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="Ex: Be real with me"
+                    placeholder="e.g., Be honest with me..."
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-gray-200 bg-white p-3 text-sm outline-none shadow-sm focus:border-blue-300"
+                    className="mt-2 w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-4 text-sm font-semibold outline-none transition-all focus:border-blue-400 focus:bg-white"
                   />
                 </div>
 
-                {/* Duration */}
+                {/* Duration Toggle - Stacked on very small screens, side-by-side on others */}
                 <div>
-                  <label className="text-sm font-semibold text-gray-800">
-                    Survey duration
-                  </label>
-
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDurationHours(24)}
-                      className={`flex-1 rounded-2xl border px-4 px-3 text-sm font-semibold shadow-sm ${
-                        durationHours === 24
-                          ? "border-blue-300 bg-blue-50 text-gray-900"
-                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      24 hours (default)
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setDurationHours(48)}
-                      className={`flex-1 rounded-2xl border px-4 py-3 text-sm font-semibold shadow-sm ${
-                        durationHours === 48
-                          ? "border-purple-300 bg-purple-50 text-gray-900"
-                          : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      48 hours (max)
-                    </button>
+                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Time Limit</label>
+                  <div className="mt-2 flex p-1 bg-gray-100/50 rounded-2xl border border-gray-100">
+                    {[24, 48].map((h) => (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => setDurationHours(h)}
+                        className={`flex-1 rounded-xl py-2.5 text-xs font-bold transition-all ${
+                          durationHours === h 
+                          ? "bg-white text-gray-900 shadow-sm" 
+                          : "text-gray-400"
+                        }`}
+                      >
+                        {h}h
+                      </button>
+                    ))}
                   </div>
-
-                  <p className="mt-2 text-xs text-gray-500">
-                    Your survey will automatically expire after this time.
-                  </p>
                 </div>
 
-                {/* Questions */}
-                <div>
+                {/* Questions List */}
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-semibold text-gray-800">
-                      Questions
-                    </label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Questions ({questions.length}/5)</label>
                     <button
                       type="button"
                       onClick={addQuestion}
                       disabled={questions.length >= 5}
-                      className="rounded-2xl border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-900 shadow-sm hover:bg-gray-50
-                        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+                      className="text-[10px] font-black uppercase tracking-widest text-blue-600 disabled:opacity-30"
                     >
-                      + Add question
+                      + Add
                     </button>
-
-                    <p className="mt-1 text-xs text-gray-500">
-                      {questions.length} / 5 questions
-                    </p>
                   </div>
 
-                  <div className="mt-3 space-y-3">
+                  <div className="space-y-3">
                     {questions.map((q, index) => (
-                      <div
-                        key={index}
-                        className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm"
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="text-xs font-semibold text-gray-500">
-                            Question {index + 1}
-                          </p>
-
-                          {questions.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => removeQuestion(index)}
-                              className="text-xs font-semibold text-gray-500 hover:text-gray-800"
-                              title="Remove question"
-                            >
-                              Remove
-                            </button>
-                          )}
-                        </div>
-
+                      <div key={index} className="relative group">
                         <input
                           type="text"
-                          placeholder="Type your question…"
+                          placeholder="Type a question..."
                           value={q}
                           onChange={(e) => updateQuestion(index, e.target.value)}
-                          className="mt-2 w-full rounded-2xl border border-gray-200 bg-white p-3 text-sm outline-none focus:border-purple-300"
+                          className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-4 pr-12 text-sm font-medium outline-none transition-all focus:border-purple-400 focus:bg-white"
                         />
+                        {questions.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeQuestion(index)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-gray-300 hover:text-red-500"
+                          >
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
-
-                  <p className="mt-3 text-xs text-gray-500">
-                    Tip: 1–3 questions usually gets the most replies.
-                  </p>
                 </div>
 
-                {/* Submit */}
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={creating}
-                  className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+                  className="w-full rounded-2xl bg-gray-900 py-4 text-xs font-black uppercase tracking-[0.2em] text-white transition-all active:scale-[0.98] disabled:opacity-50 shadow-xl shadow-gray-900/10"
                 >
-                  {creating ? "Creating..." : "Create Survey"}
+                  {creating ? "Launching..." : "Launch Survey 🚀"}
                 </button>
-
-                <p className="text-center text-xs text-gray-500">
-                  You’ll be sent to your dashboard after creating.
-                </p>
               </form>
             </div>
           </div>
 
-          {/* Right: helper card */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold">What works best</p>
-              <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                <li>• Simple, direct questions</li>
-                <li>• Avoid yes/no — ask “why?”</li>
-                <li>• Make it easy to answer fast</li>
-              </ul>
-
-              <div className="mt-6 rounded-2xl bg-gray-50 p-4">
-                <p className="text-xs font-semibold text-gray-700">
-                  Example questions
-                </p>
-                <div className="mt-2 space-y-2 text-xs text-gray-600">
-                  <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-                    “What’s one thing I should improve?”
-                  </div>
-                  <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-                    “What’s your honest first impression of me?”
-                  </div>
-                  <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-                    “What should I do more of?”
-                  </div>
+          {/* RIGHT: LIVE PREVIEW - Completely hidden on mobile/tablet */}
+          <div className="hidden lg:block lg:col-span-5">
+            <div className="sticky top-12 w-full max-w-[320px] mx-auto">
+              <p className="mb-4 text-center text-[10px] font-black uppercase tracking-widest text-gray-400">Live Preview</p>
+        
+              {/* The Phone Frame */}
+              <div className="relative aspect-[9/18.5] w-full rounded-[3rem] border-[8px] border-gray-900 bg-gray-900 shadow-2xl">
+                <div className="absolute top-0 left-1/2 h-6 w-28 -translate-x-1/2 rounded-b-2xl bg-gray-900 z-20" />
+                <div className="h-full w-full overflow-y-auto rounded-[2.2rem] bg-gray-50 p-5 pt-10">
+                  {/* ... (Keep the same inner phone content from the previous message) ... */}
                 </div>
-              </div>
-
-              <div className="mt-6 text-xs text-gray-500">
-                After you create it, you’ll get a share link you can post anywhere.
               </div>
             </div>
           </div>
+          
         </div>
       </section>
 
