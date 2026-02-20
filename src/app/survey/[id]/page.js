@@ -280,6 +280,21 @@ export default function SurveyPage() {
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 leading-[1.1]">
             {surveyTitle}
           </h1>
+          
+          {/* THE PRIVACY SHIELD */}
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <div className="flex items-center gap-2.5 rounded-full bg-gray-900 px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.15em] text-white shadow-xl">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              Privacy Shield Active
+            </div>
+            
+            <p className="max-w-[280px] text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
+              100% Anonymous • No Account • No Trace
+            </p>
+          </div>
         </div>
 
         {/* Questions card */}
