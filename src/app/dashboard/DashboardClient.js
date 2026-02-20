@@ -779,13 +779,8 @@ export default function DashboardClient() {
         ) : (
           // DETAIL VIEW
           <div className="grid gap-4">
-            <div className="-mt-2">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="text-xs font-semibold text-gray-600 hover:text-gray-900"
-              >
-                ← My Surveys
-              </button>
+            <div className="px-1 pt-2 pb-2">
+              
             </div>
 
             <div className="px-1 pt-2 pb-2">
@@ -854,10 +849,32 @@ export default function DashboardClient() {
               </div>
 
               {responses.length === 0 ? (
-                <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6">
+                <div className="mt-6 flex flex-col items-center justify-center rounded-3xl border border-gray-100 bg-gray-50/50 p-8 text-center">
                   <p className="text-sm text-gray-600">
-                    No responses yet. Share your link to start collecting.
+                    No responses yet.
                   </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Share your link to start collecting feedback.
+                  </p>
+                  <button
+                    onClick={() => setSharingSurvey({ id: survey?.id, title: survey?.title })}
+                    className="mt-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:border-gray-900 hover:text-gray-900 transition-all active:scale-95"
+                    title="Share Survey"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    </svg>
+                  </button>
                 </div>
               ) : (
                 <div className="relative mt-6">
