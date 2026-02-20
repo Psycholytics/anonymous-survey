@@ -7,23 +7,6 @@ export default function ThankYouPage() {
   const router = useRouter();
   const [seconds, setSeconds] = useState(5);
 
-  useEffect(() => {
-    // countdown only
-    const interval = setInterval(() => {
-      setSeconds((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
-
-    // redirect separately (no setState callback)
-    const timeout = setTimeout(() => {
-      router.replace("/");
-    }, 5000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, [router]);
-
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* background glow */}
@@ -55,7 +38,7 @@ export default function ThankYouPage() {
           </p>
           
           <button
-            onClick={() => router.push("/create")}
+            onClick={() => router.push("/login?mode=signup")}
             className="mt-8 w-full rounded-[22px] bg-gray-900 py-5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all active:scale-95 hover:bg-black"
           >
             Create My Survey 🚀
