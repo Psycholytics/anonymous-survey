@@ -295,27 +295,27 @@ export default function SurveyPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               {questions.map((q, index) => (
-                <div key={q.id}>
-                  <label className="block text-sm font-semibold text-gray-900">
-                    {q.text}
+                <div 
+                  key={q.id}
+                  className="group rounded-[32px] border border-gray-100 bg-white p-6 sm:p-8 shadow-lg shadow-gray-200/20 transition-all focus-within:border-blue-200 focus-within:ring-8 focus-within:ring-blue-500/5"
+                >
+                  <label className="mb-4 block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                    Question {index + 1}
                   </label>
+  
+                  <p className="mb-6 text-lg font-black leading-tight text-gray-900">
+                    {q.text}
+                  </p>
 
                   <textarea
                     ref={index === 0 ? firstInputRef : undefined}
-                    className="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none focus:border-gray-300"
-                    rows={3}
+                    placeholder="Type your honest thoughts..."
+                    className="w-full min-h-[140px] resize-none rounded-2xl bg-gray-50/50 p-5 text-sm font-medium outline-none transition-all focus:bg-white focus:ring-1 focus:ring-gray-100"
                     value={answers[index] || ""}
                     onChange={(e) => updateAnswer(index, e.target.value)}
                     maxLength={500}
                     disabled={submitting || isExpired}
                   />
-
-                  {/* B) only show counter after typing */}
-                  {(answers[index] || "").length > 0 && (
-                    <p className="mt-2 text-right text-[11px] text-gray-500">
-                      {(answers[index] || "").length}/500
-                    </p>
-                  )}
                 </div>
               ))}
 
@@ -327,17 +327,16 @@ export default function SurveyPage() {
               )}
 
               <button
-                className={cx(
-                  "w-full rounded-2xl px-4 py-3 text-sm font-semibold text-white shadow-sm",
-                  isExpired || !hasAtLeastOneAnswer
-                    ? "cursor-not-allowed bg-gray-300"
-                    : "bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-95",
-                  submitting && "opacity-70"
-                )}
                 type="submit"
                 disabled={submitting || isExpired || !hasAtLeastOneAnswer}
+                className={cx(
+                  "w-full overflow-hidden rounded-[26px] py-6 text-xs font-black uppercase tracking-[0.3em] text-white shadow-2xl transition-all active:scale-[0.97]",
+                  isExpired || !hasAtLeastOneAnswer
+                    ? "cursor-not-allowed bg-gray-200 text-gray-400 shadow-none"
+                    : "bg-gray-900 hover:bg-black"
+                )}
               >
-                {submitting ? "Submitting..." : "Submit anonymously"}
+                {submitting ? "Sending..." : "Send Anonymously 🔒"}
               </button>
 
               <p className="text-center text-[11px] text-gray-500">
