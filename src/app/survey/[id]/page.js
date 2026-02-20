@@ -255,18 +255,10 @@ export default function SurveyPage() {
               </div>
             </div>
 
-            <div className="pt-12">
-              <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">@{handle}</p>
-                  <h1 className="mt-2 truncate text-2xl font-extrabold tracking-tight text-gray-900">
-                    {surveyTitle}
-                  </h1>
-                </div>
-
-                <div className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700">
-                  🔒 They won’t know it was you
-                </div>
+            <div className="pt-14 pb-8 px-8">
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Survey Creator</span>
+                <p className="text-sm font-bold text-gray-900">@{handle}</p>
               </div>
 
               {isExpired && (
@@ -283,9 +275,11 @@ export default function SurveyPage() {
           </div>
         </div>
 
-        {/* Quick reassurance strip (optional but clean) */}
-        <div className="mt-4 rounded-2xl border border-gray-200 bg-white/70 px-4 py-2 text-center text-xs font-semibold text-gray-700 shadow-sm backdrop-blur">
-          🔒 100% anonymous • ⏱️ ~2 minutes • Answer what you want
+        {/* NEW Standalone Title block */}
+        <div className="mt-12 mb-10 text-center px-4">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 leading-[1.1]">
+            {surveyTitle}
+          </h1>
         </div>
 
         {/* Questions card */}
