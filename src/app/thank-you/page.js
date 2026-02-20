@@ -33,32 +33,45 @@ export default function ThankYouPage() {
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
       </div>
 
-      <section className="relative mx-auto flex max-w-xl flex-col items-center px-6 py-24 text-center">
-        <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-2xl text-white shadow-sm">
-            ✓
-          </div>
+      <section className="relative mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+        {/* The "Bounce" Success Icon */}
+        <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-[32px] bg-white shadow-2xl shadow-gray-200/50">
+          <span className="text-4xl animate-bounce">✅</span>
+        </div>
 
-          <h1 className="mt-5 text-2xl font-extrabold tracking-tight">
-            Submitted.
-          </h1>
+        <h1 className="text-4xl font-black tracking-tight text-gray-900 sm:text-5xl">
+          Sent safely.
+        </h1>
+        
+        <p className="mt-6 text-lg font-medium text-gray-500 leading-relaxed">
+          Your responses were delivered anonymously. <br /> No trace was left behind.
+        </p>
 
-          <p className="mt-2 text-sm text-gray-600">
-            Your response was sent successfully.
+        {/* CONVERSION CARD */}
+        <div className="mt-12 w-full rounded-[40px] border border-gray-100 bg-white p-8 shadow-2xl shadow-gray-200/40">
+          <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight">Now it's your turn.</h2>
+          <p className="mt-2 text-sm font-medium text-gray-500">
+            Create your own survey and see what people <br className="hidden sm:block" /> really think about you.
           </p>
-
-          <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
-            Redirecting home in {seconds}s…
-          </div>
-
+          
           <button
-            type="button"
-            onClick={() => router.replace("/")}
-            className="mt-5 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+            onClick={() => router.push("/create")}
+            className="mt-8 w-full rounded-[22px] bg-gray-900 py-5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all active:scale-95 hover:bg-black"
           >
-            Go now
+            Create My Survey 🚀
+          </button>
+          
+          <button
+            onClick={() => router.push("/")}
+            className="mt-4 w-full py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors"
+          >
+            Or go back home
           </button>
         </div>
+
+        <footer className="mt-16 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300">
+          100% Private • Secured by Privacy Shield
+        </footer>
       </section>
     </main>
   );
