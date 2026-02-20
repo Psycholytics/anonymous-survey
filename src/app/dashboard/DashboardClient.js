@@ -244,27 +244,26 @@ export default function DashboardClient() {
 
   // close menus on outside click / scroll / escape
   useEffect(() => {
-    const isAnyMenuOpen = onpenMenuId !== null || openHeaderMenu;
 
     function closeAll() {
-      setOpenMenuId(null);
-      setOpenHeaderMenu(false);
+      // Only trigger state updates if a menu is actually open
+      // This prevents unnecessary re-renders during normal scrolling
+
+      setOpenMenuId(current => current !== null ? null : current);
+      setOpenHeaderMenu(current => current === true ? false : current);
     }
 
     function onKey(e) {
       if (e.key === "Escape") {
-        closeAll();
+        setOpenMenuId(null);
+        setOpenHeaderMenu(false)
         setRenamingId(null);
         setDeletingId(null);
       }
     }
 
-    // Only listen for click/scroll if a menu is actually open
-    if (isAnyMenuOpen) {
-      window.addEventListener("click", closeAll);
-      window.addEventListener("scroll", closeAll, { passive: true });
-    }
-
+    window.addEventListener("click", closeAll);
+    window.addEventListener("scroll", closeAll, { passive: true });
     window.addEventListener("keydown", onKey);
 
     return () => {
@@ -272,7 +271,7 @@ export default function DashboardClient() {
       window.removeEventListener("scroll", closeAll);
       window.removeEventListener("keydown", onKey);
     };
-  }, [openMenuId, openHeaderMenu]); // Re-run effect when menu states change
+  }, []);
 
   const origin = useMemo(() => {
     if (typeof window === "undefined") return "";
