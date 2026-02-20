@@ -227,6 +227,7 @@ export default function DashboardClient() {
   const [renameValue, setRenameValue] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [deletingTitle, setDeletingTitle] = useState("");
+  const [sharingSurvey, setSharingSurvey] = useState(null);
 
   function showToast(type, text) {
     setToast({ type, text });
@@ -725,28 +726,26 @@ export default function DashboardClient() {
                         </div>
                       </div>
 
-                      <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2">
+                      <div className="mt-4 flex items-center gap-2">
                         <button
                           onClick={() => goToSurveyDetail(s.id)}
-                          className="col-span-1 rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
+                          className="flex-1 rounded-2xl border border-gray-200 bg-white py-2.5 text-sm font-bold text-gray-900 shadow-sm hover:bg-gray-50"
                         >
-                          Open
+                          Open Results
                         </button>
 
                         <button
-                          onClick={() => {
-                            if (linkDisabled) return;
-                            copy(url);
-                          }}
+                          onClick={() => !linkDisabled && setSharingSurvey({ id: s.id, title: s.title })}
                           disabled={linkDisabled}
                           className={cx(
-                            "col-span-1 rounded-2xl px-4 py-2.5 text-sm font-semibold shadow-sm",
+                            "flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm transition-all active:scale-95",
                             linkDisabled
                               ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                              : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-95"
+                              : "bg-gray-900 text-white hover:bg-black"
                           )}
+                          title="Share Survey"
                         >
-                          {linkDisabled ? "Expired" : "Copy link"}
+                          <span className="text-lg">↗</span>
                         </button>
                       </div>
                     </div>
@@ -923,6 +922,58 @@ export default function DashboardClient() {
           </div>
         )}
       </section>
+
+      {/* SHARE MODAL - ADDED HERE */}
+      {sharingSurvey && (
+        <div 
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-900/20 backdrop-blur-sm px-6" 
+          onClick={() => setSharingSurvey(null)}
+        >
+          <div 
+            className="w-full max-w-xs rounded-[32px] border border-gray-200 bg-white p-6 shadow-2xl animate-in zoom-in-95" 
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-center text-sm font-bold text-gray-500 uppercase tracking-widest">Share Survey</h3>
+            
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              {/* X (Twitter) */}
+              <button 
+                onClick={() => window.open(`https://twitter.com/intent/tweet?text=Check out my survey: ${origin}/survey/${sharingSurvey.id}`, '_blank')}
+                className="flex flex-col items-center gap-2 text-[10px] font-bold text-gray-600 hover:text-black"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-xl border border-gray-100">𝕏</div>
+                X
+              </button>
+              
+              {/* Facebook */}
+              <button 
+                onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${origin}/survey/${sharingSurvey.id}`, '_blank')}
+                className="flex flex-col items-center gap-2 text-[10px] font-bold text-gray-600 hover:text-blue-600"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-xl border border-blue-100">f</div>
+                Facebook
+              </button>
+              
+              {/* Copy Link */}
+              <button 
+                onClick={() => { copy(`${origin}/survey/${sharingSurvey.id}`); setSharingSurvey(null); }}
+                className="flex flex-col items-center gap-2 text-[10px] font-bold text-gray-600 hover:text-purple-600"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-xl border border-purple-100">🔗</div>
+                Link
+              </button>
+            </div>
+            
+            <button 
+              onClick={() => setSharingSurvey(null)} 
+              className="mt-8 w-full rounded-2xl py-2 text-sm font-bold text-gray-400 hover:text-gray-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      
     </main>
   );
 }
