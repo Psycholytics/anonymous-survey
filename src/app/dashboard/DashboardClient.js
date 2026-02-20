@@ -623,15 +623,26 @@ export default function DashboardClient() {
             </div>
 
             {surveys.length === 0 ? (
-              <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                <p className="text-sm text-gray-600">No surveys yet.</p>
-                <a
-                  href="/create"
-                  className="mt-4 inline-flex rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+              /* --- NEW CENTERED ZERO STATE ---*/
+              <div className="flex flex-col items-center justify-center rounded-[40px] border-2 border-dashed border-gray-100 bg-white/50 py-16 px-6 text-center">
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gray-50 text-4xl shadow-sm">
+                  📝
+                </div>
+                <h2 className="text-xl font-black text-gray-900 tracking-tight">No surveys found</h2>
+                <p className="mt-2 max-w-[260px] text-sm font-medium text-gray-500 leading-relaxed">
+                  You haven't created any surveys yet. Start now and collect responses in minutes.
+                </p>
+                <button
+                  onClick={() => {
+                    sessionStorage.setItem("nav_from_dashboard", "1");
+                    router.push("/create");
+                  }}
+                  className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gray-900 px-8 py-3.5 text-sm font-bold text-white shadow-lg active:scale-95 transition-all hover:bg-black"
                 >
                   Create your first survey
-                </a>
+                </button>
               </div>
+              /* --- END NEW ZERO STATE --- */
             ) : (
               <div className="grid gap-3">
                 {surveys.map((s) => {
