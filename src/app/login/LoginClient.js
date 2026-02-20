@@ -52,10 +52,6 @@ export default function LoginClient() {
   const [resetSending, setResetSending] = useState(false);
 
   useEffect(() => {
-    setMode(initialMode);
-  }, [initialMode]);
-
-  useEffect(() => {
     if (!handle) {
       setHandleError("");
       return;
