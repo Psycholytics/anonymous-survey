@@ -541,6 +541,7 @@ export default function DashboardClient() {
             <input 
               autoFocus
               className="mt-4 w-full rounded-2xl border border-gray-200 p-3 text-sm outline-none focus:border-blue-300 shadow-sm"
+              placeholder={deletingTitle}
               value={renameValue}
               onChange={(e) => setRenameValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleRename()}
@@ -724,7 +725,7 @@ export default function DashboardClient() {
                             }
                             onRename={() => {
                               setRenamingId(s.id);
-                              setRenameValue(s.title || "");
+                              setRenameValue("");
                             }}
                             onDelete={() => {
                               setDeletingId(s.id);
