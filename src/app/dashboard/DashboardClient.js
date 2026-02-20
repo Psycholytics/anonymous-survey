@@ -740,8 +740,8 @@ export default function DashboardClient() {
                           className={cx(
                             "flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm transition-all active:scale-95",
                             linkDisabled
-                              ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                              : "bg-gray-900 text-white hover:bg-black"
+                              ? "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300"
+                              : "border-gray-200 bg-white text-gray-600 hover:border-gray-900 hover:text-gray-900 shadow-sm"
                           )}
                           title="Share Survey"
                         >
@@ -753,7 +753,7 @@ export default function DashboardClient() {
                             viewBox="0 0 24 24" 
                             fill="none" 
                             stroke="currentColor" 
-                            strokeWidth="2.5" 
+                            strokeWidth="2" 
                             strokeLinecap="round" 
                             strokeLinejoin="round"
                           >
