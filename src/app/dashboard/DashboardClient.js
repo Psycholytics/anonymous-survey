@@ -221,14 +221,6 @@ export default function DashboardClient() {
 
   const [surveys, setSurveys] = useState([]);
 
-  useEffect(() => {
-    if (unlocked === "1" && survey?.is_paid) {
-      setRevealing(true);
-      const timer = setTimeout(() => setRevealing(false), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [unlocked, survey?.is_paid]);
-
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
@@ -928,11 +920,7 @@ export default function DashboardClient() {
                                     key={r.id}
                                     className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm leading-relaxed text-gray-800 shadow-sm"
                                   >
-                                    <div className={`whitespace-pre-wrap max-w-prose transition-all duration-[2000ms] ease-in-out ${
-                                      revealing 
-                                        ? "blur-xl opacity-20 scale-95 select-none" 
-                                        : "blur-0 opacity-100 scale-100"
-                                    }`}>
+                                    <div className="whitespace-pre-wrap max-w-prose">
                                       {r.answer}
                                     </div>
                                   </div>
