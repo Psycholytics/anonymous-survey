@@ -222,6 +222,14 @@ export default function DashboardClient() {
 
   const [surveys, setSurveys] = useState([]);
 
+  useEffect(() => {
+    if (unlocked === "1" && survey?.is_paid) {
+      setRevealing(true);
+      const timer = setTimeout(() => setRevealing(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [unlocked, survey?.is_paid]);
+
   const [survey, setSurvey] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
