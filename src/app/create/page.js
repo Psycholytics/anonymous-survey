@@ -263,7 +263,7 @@ export default function CreatePage() {
                 {/* Title Input */}
                 <div className="group">
                   <div className="flex items-end justify-between">
-                    <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
+                    <label htmlFor="survey-title" className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 cursor-pointer">
                       Survey Title <span className="font-medium lowercase opacity-60">(optional)</span>
                     </label>
                     <span className={`text-[10px] font-bold transition-colors ${title.length > MAX_TITLE_LEN ? "text-red-500" : "text-gray-400"}`}>
@@ -271,6 +271,7 @@ export default function CreatePage() {
                     </span>
                   </div>
                   <input
+                    id="survey-title"
                     type="text"
                     placeholder="e.g., Be honest with me..."
                     value={title}
@@ -283,12 +284,14 @@ export default function CreatePage() {
 
                 {/* Duration Toggle - Stacked on very small screens, side-by-side on others */}
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Time Limit</label>
-                  <div className="mt-2 flex p-1 bg-gray-100/50 rounded-2xl border border-gray-100">
+                  <div id="duration-label" className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">Time Limit</div>
+                  <div role="radiogroup" aria-labelledby="duration-label" className="mt-2 flex p-1 bg-gray-100/50 rounded-2xl border border-gray-100">
                     {[24, 48].map((h) => (
                       <button
                         key={h}
                         type="button"
+                        role="radio"
+                        aria-checked={durationHours === h}
                         onClick={() => setDurationHours(h)}
                         className={`flex-1 rounded-xl py-2.5 text-xs font-bold transition-all ${
                           durationHours === h 
@@ -321,6 +324,8 @@ export default function CreatePage() {
                       <div key={index} className="group">
                         <div className="relative">
                           <input
+                            id={`question-${index}`}
+                            aria-label={`Question ${index + 1}`}
                             type="text"
                             placeholder="Type a question..."
                             value={q}
