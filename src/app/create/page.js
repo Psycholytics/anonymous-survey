@@ -47,26 +47,18 @@ export default function CreatePage() {
     } catch {}
   }, []);
 
+  // Auto-save draft as the user types
+  useEffect(() => {
+    try {
+      const draft = JSON.stringify({ title, questions });
+      localStorage.setItem("draft_survey", draft);
+    } catch (err) {
+      console.error("Failed to save draft", err);
+    }
+  }, [title, questions]);
 
   // Prevent any double submit (click + autosubmit race)
   const submitLockRef = useRef(false);
-
-  // Restore draft into the UI (so the user sees what they typed after login)
-  useEffect(() => {
-    let raw = null;
-    try {
-      raw = localStorage.getItem("draft_survey");
-    } catch {}
-    if (!raw) return;
-
-    try {
-      const draft = JSON.parse(raw);
-      if (typeof draft?.title === "string") setTitle(draft.title);
-      if (Array.isArray(draft?.questions) && draft.questions.length) {
-        setQuestions(draft.questions);
-      }
-    } catch {}
-  }, []);
 
   function addQuestion() {
     if (questions.length >= 5) return;
