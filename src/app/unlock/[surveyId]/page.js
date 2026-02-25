@@ -253,15 +253,23 @@ export default function UnlockSurveyPage() {
                         </div>
                       )}
 
-                      <div className="mt-6 flex flex-col items-center justify-center border-y border-gray-100 py-4">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-extrabold text-gray-900">$1.99</span>
-                          <span className="text-sm font-medium text-gray-500 italic">one-time</span>
-                        </div>
-                        <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-blue-600">
+                      <div className="mt-8 flex flex-col items-center justify-center">
+                        <span className="text-4xl font-extrabold text-gray-900">$1.99</span>
+                        <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-blue-600">
                           Lifetime Access
                         </p>
                       </div>
+
+                      <button
+                        onClick={startCheckout}
+                        disabled={startingCheckout}
+                        className={cx(
+                          "mt-6 w-full rounded-2xl bg-gray-900 px-5 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-black active:scale-[0.98]",
+                          startingCheckout && "cursor-not-allowed opacity-70"
+                        )}
+                      >
+                        {startingCheckout ? "Preparing reveal..." : "Reveal the truth"}
+                      </button>
 
                       <button
                         onClick={startCheckout}
