@@ -264,17 +264,6 @@ export default function UnlockSurveyPage() {
                         onClick={startCheckout}
                         disabled={startingCheckout}
                         className={cx(
-                          "mt-6 w-full rounded-2xl bg-gray-900 px-5 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-black active:scale-[0.98]",
-                          startingCheckout && "cursor-not-allowed opacity-70"
-                        )}
-                      >
-                        {startingCheckout ? "Preparing reveal..." : "Reveal the truth"}
-                      </button>
-
-                      <button
-                        onClick={startCheckout}
-                        disabled={startingCheckout}
-                        className={cx(
                           "mt-4 w-full rounded-2xl bg-gray-900 px-5 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-black active:scale-[0.98]",
                           startingCheckout && "cursor-not-allowed opacity-70"
                         )}
