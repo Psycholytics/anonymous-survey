@@ -4,7 +4,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* Soft gradient background */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[90px]" />
         <div className="absolute top-28 right-[-140px] h-[560px] w-[560px] rounded-full bg-purple-500/10 blur-[110px]" />
         <div className="absolute bottom-[-220px] left-[-160px] h-[620px] w-[620px] rounded-full bg-blue-500/10 blur-[120px]" />
@@ -63,13 +63,6 @@ export default function HomePage() {
               >
                 Create your survey
               </Link>
-
-              <Link
-                href="#how"
-                className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-center text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
-              >
-                See how it works
-              </Link>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-gray-600">
@@ -87,7 +80,11 @@ export default function HomePage() {
 
           {/* Preview Card */}
           <div className="relative">
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            {/* Glow moved behind the card in the DOM */}
+            <div className="pointer-events-none absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-500/15 to-purple-500/15 blur-2xl" />
+            
+            {/* Added 'relative' to the card to ensure it stacks above the glow */}
+            <div className="relative rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold">Preview</p>
@@ -124,7 +121,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <button className="mt-4 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-sm">
+                  <button type="button" disabled className="mt-4 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-sm cursor-default">
                     Submit response
                   </button>
 
@@ -134,8 +131,6 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-
-            <div className="pointer-events-none absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-500/15 to-purple-500/15 blur-2xl" />
           </div>
         </div>
       </section>
