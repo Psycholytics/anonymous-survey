@@ -191,12 +191,22 @@ export default function UnlockSurveyPage() {
             {/* Blurred Teaser Section */}
             <div className="mt-8 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex h-14 w-full items-center justify-between rounded-2xl border border-gray-200 bg-white/50 px-4 shadow-sm backdrop-blur-sm">
-                  <div className={cx(
-                    "h-2 rounded-full bg-gray-300 blur-[5px]",
-                    i === 1 ? "w-3/4" : i === 2 ? "w-1/2" : "w-2/3"
-                  )} />
-                  <span className="text-lg opacity-30">🔒</span>
+                <div 
+                  key={i} 
+                  className="flex h-14 w-full items-center justify-between rounded-2xl border border-gray-200 bg-white/80 px-4 shadow-sm"
+                >
+                  {/* The "Ink" */}
+                  <div className="flex flex-col gap-1.5 w-full">
+                    <div className={cx(
+                      "h-2.5 rounded bg-gray-900 blur-[6px]", 
+                      i === 1 ? "w-2/3" : i === 2 ? "w-1/2" : "w-3/4"
+                    )} />
+                    {i !== 2 && (
+                       <div className="h-2.5 w-1/3 rounded bg-gray-900 blur-[6px]" />
+                    )}
+                  </div>
+                  
+                  <span className="ml-4 text-lg grayscale opacity-20">🔒</span>
                 </div>
               ))}
             </div>
