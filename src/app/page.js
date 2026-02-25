@@ -86,14 +86,19 @@ export default function HomePage() {
             {/* Main Card */}
             <div className="relative rounded-3xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
               
-              {/* Mock Header (Simplified from screenshot) */}
+              {/* Mock Header */}
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <h3 className="text-xl font-extrabold text-gray-900 tracking-tight">The Main Character Check-In</h3>
+                  <h3 className="text-xl font-extrabold text-gray-900 tracking-tight">Brutal Honesty Hour</h3>
                   <p className="text-xs text-gray-500 mt-0.5">Survey results</p>
                 </div>
-                <div className="rounded-full bg-green-50 border border-green-200 px-3 py-1 text-xs font-bold text-green-700 shadow-sm flex items-center gap-1.5">
-                  <span className="text-base leading-none">🔓</span> Unlocked
+                {/* PREVIEW BADGE */}
+                <div className="flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 shadow-sm">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                  </span>
+                  Preview
                 </div>
               </div>
 
@@ -101,26 +106,26 @@ export default function HomePage() {
               <div className="mt-5 rounded-3xl border border-gray-100 bg-gray-50/50 p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-sm font-bold text-gray-900 leading-snug">
-                    Am I actually the main character, or just an eccentric NPC?
+                    What's the one thing everyone thinks about me but won't say to my face?
                   </p>
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-xs font-bold text-gray-600 shadow-sm">
                     4
                   </span>
                 </div>
 
-                {/* The Mock Answers */}
+                {/* The Mock Answers (Toxic / Drama) */}
                 <div className="mt-5 space-y-3">
                   <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
-                    Main character energy. You wore a cape to the grocery store.
+                    You lowkey have a massive superiority complex.
                   </div>
                   <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
-                    NPC for sure. You've been pacing the same hallway for 3 hours.
+                    You drop your friends the second you start dating someone new 😒
                   </div>
                   <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
-                    Look within. The protagonist was the friends we made along the way.
+                    You try way too hard to seem like you don't care, but we all know you do.
                   </div>
                   <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
-                    I just want my lawnmower back.
+                    You're a massive text-roach. Takes you 3 business days to reply.
                   </div>
                 </div>
 
