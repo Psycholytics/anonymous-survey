@@ -188,29 +188,6 @@ export default function UnlockSurveyPage() {
               to guess anymore.
             </p>
 
-            {/* Blurred Teaser Section */}
-            <div className="mt-8 space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div 
-                  key={i} 
-                  className="flex h-14 w-full items-center justify-between rounded-2xl border border-gray-200 bg-white/80 px-4 shadow-sm"
-                >
-                  {/* The "Ink" */}
-                  <div className="flex flex-col gap-1.5 w-full">
-                    <div className={cx(
-                      "h-2.5 rounded bg-gray-900 blur-[6px]", 
-                      i === 1 ? "w-2/3" : i === 2 ? "w-1/2" : "w-3/4"
-                    )} />
-                    {i !== 2 && (
-                       <div className="h-2.5 w-1/3 rounded bg-gray-900 blur-[6px]" />
-                    )}
-                  </div>
-                  
-                  <span className="ml-4 text-lg grayscale opacity-20">🔒</span>
-                </div>
-              ))}
-            </div>
-
             <div className="mt-5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm">
               Some might surprise you 😳
               <br />
@@ -242,10 +219,19 @@ export default function UnlockSurveyPage() {
 
                   <div className="mt-5 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
                     <p className="text-xs font-semibold text-gray-600">What you get</p>
-                    <ul className="mt-2 space-y-1 text-sm text-gray-700">
-                      <li>• Full access to all responses</li>
-                      <li>• Survey saved forever ⏳🔒</li>
-                      <li>• And most importantly, what your friends really think!</li>
+                    <ul className="mt-2 space-y-2 text-sm text-gray-700">
+                      <li className="flex items-center gap-2">
+                        <span>✅</span> 
+                        <span>Unfilter every anonymous response</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span>✅</span> 
+                        <span>Permanent access (No expiry)</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span>✅</span> 
+                        <span>The honest truth you can't get anywhere else</span>
+                      </li>
                     </ul>
                   </div>
 
@@ -267,19 +253,24 @@ export default function UnlockSurveyPage() {
                         </div>
                       )}
 
+                      <div className="mt-6 flex items-baseline gap-2">
+                        <span className="text-3xl font-extrabold text-gray-900">$1.99</span>
+                        <span className="text-sm font-medium text-gray-500">one-time payment</span>
+                      </div>
+
                       <button
                         onClick={startCheckout}
                         disabled={startingCheckout}
                         className={cx(
-                          "mt-6 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-extrabold text-white shadow-sm hover:opacity-95",
+                          "mt-4 w-full rounded-2xl bg-gray-900 px-5 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-black active:scale-[0.98]",
                           startingCheckout && "cursor-not-allowed opacity-70"
                         )}
                       >
-                        {startingCheckout ? "Starting checkout…" : "See what they really said"}
+                        {startingCheckout ? "Preparing reveal..." : "Reveal the truth"}
                       </button>
 
-                      <p className="mt-3 text-center text-xs text-gray-500">
-                        Anonymous. One-time unlock. Yours forever. 🔒
+                      <p className="mt-4 text-center text-[11px] font-medium text-gray-400 uppercase tracking-widest">
+                        Secure checkout via Stripe
                       </p>
                     </>
                   )}
