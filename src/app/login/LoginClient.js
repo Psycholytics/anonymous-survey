@@ -21,6 +21,31 @@ function isValidHandle(handle) {
   return /^[a-z0-9][a-z0-9_]{2,19}$/.test(handle);
 }
 
+// Password Validation Logic
+function passwordChecks(pw) {
+  const s = String(pw || "");
+  return {
+    len: s.length >= 8,
+    upper: /[A-Z]/.test(s),
+    lower: /[a-z]/.test(s),
+    number: /[0-9]/.test(s),
+    special: /[^A-Za-z0-9]/.test(s),
+  };
+}
+
+function allPasswordRulesPass(pw) {
+  const c = passwordChecks(pw);
+  return c.len && c.upper && c.lower && c.number && c.special;
+}
+
+function RuleLine({ ok, children }) {
+  return (
+    <div className={cx("text-[11px] font-semibold transition-colors", ok ? "text-green-700" : "text-gray-400")}>
+      {ok ? "✓ " : "• "}{children}
+    </div>
+  );
+}
+
 export default function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,6 +67,10 @@ export default function LoginClient() {
   const [handle, setHandle] = useState("");
   const [handleError, setHandleError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Real-time password validation
+  const pwRules = useMemo(() => passwordChecks(password), [password]);
+  const isPasswordOk = useMemo(() => allPasswordRulesPass(password), [password]);
 
   // Toast System
   const [toast, setToast] = useState(null);
@@ -309,9 +338,21 @@ export default function LoginClient() {
                   )}
                 </button>
               </div>
+
+              {/* Added Real-Time Checklist */}
+              {mode === "signup" && (
+                <div className="mt-3 rounded-2xl border border-gray-50 bg-gray-50/50 p-4">
+                  <div className="mb-2 text-[10px] font-extrabold uppercase tracking-wider text-gray-500">Requirements</div>
+                  <RuleLine ok={pwRules.len}>8+ characters</RuleLine>
+                  <RuleLine ok={pwRules.upper}>One uppercase letter</RuleLine>
+                  <RuleLine ok={pwRules.lower}>One lowercase letter</RuleLine>
+                  <RuleLine ok={pwRules.number}>One number</RuleLine>
+                  <RuleLine ok={pwRules.special}>One special character</RuleLine>
+                </div>
+              )}
             </div>
 
-            <button disabled={loading} className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-bold text-white shadow-md hover:opacity-95 disabled:opacity-60 transition-opacity" type="submit">
+            <button disabled={loading || (mode === "signup" && (!!handleError || !isPasswordOk))} className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-bold text-white shadow-md hover:opacity-95 disabled:opacity-60 transition-opacity" type="submit">
               {loading ? "Processing..." : mode === "signup" ? "Get Started" : "Sign In"}
             </button>
 
