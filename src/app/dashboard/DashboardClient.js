@@ -123,7 +123,7 @@ function CardMenu({ open, onToggle, onRename, onDelete }) {
 }
 
 /** Header menu (top-right ☰) */
-function HeaderMenu({ open, onToggle, onClose, onProfile, onSettings, onLogout }) {
+function HeaderMenu({ open, onToggle, onClose, onDashboard, onProfile, onSettings, onLogout }) {
   return (
     <div className="relative" onClick={(e) => e.stopPropagation()}>
       <button
@@ -149,7 +149,22 @@ function HeaderMenu({ open, onToggle, onClose, onProfile, onSettings, onLogout }
             type="button"
             onClick={() => {
               onClose?.();
-              router.push("/dashboard");
+              onDashboard?.();
+            }}
+            className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            role="menuitem"
+          >
+            Dashboard
+            <div className="mt-0.5 text-[11px] font-medium text-gray-500">
+              your survey list
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onClose?.();
+              onProfile?.();
             }}
             className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
             role="menuitem"
@@ -591,6 +606,7 @@ export default function DashboardClient() {
             open={openHeaderMenu}
             onToggle={() => setOpenHeaderMenu((v) => !v)}
             onClose={() => setOpenHeaderMenu(false)}
+            onDashboard={() => router.push("/dashboard")}
             onProfile={goToProfile}
             onSettings={goToSettings}
             onLogout={logout}
