@@ -260,7 +260,7 @@ export default function LoginClient() {
                   handleError ? "border-red-400" : "border-gray-200 focus-within:border-purple-300"
                 )}>
                   <span className="text-sm text-gray-500">@</span>
-                  <input id="handle" className="ml-2 w-full text-sm outline-none" value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="username" autoComplete="off" />
+                  <input id="handle" className="ml-2 w-full text-sm outline-none" value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="username" autoComplete="username" />
                 </div>
                 {handleError && <p className="mt-1 text-xs font-medium text-red-500">{handleError}</p>}
               </div>
@@ -268,7 +268,7 @@ export default function LoginClient() {
 
             <div>
               <label htmlFor="email" className="text-sm font-semibold text-gray-800">Email</label>
-              <input id="email" className="mt-2 w-full rounded-2xl border border-gray-200 p-3 text-sm outline-none focus:border-blue-300 shadow-sm" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" type="email" />
+              <input id="email" className="mt-2 w-full rounded-2xl border border-gray-200 p-3 text-sm outline-none focus:border-blue-300 shadow-sm" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" type="email" autoComplete="email" />
             </div>
 
             <div>
@@ -280,7 +280,7 @@ export default function LoginClient() {
                   </button>
                 )}
               </div>
-              <input id="password" className="mt-2 w-full rounded-2xl border border-gray-200 p-3 text-sm outline-none focus:border-purple-300 shadow-sm" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" type="password" />
+              <input id="password" className="mt-2 w-full rounded-2xl border border-gray-200 p-3 text-sm outline-none focus:border-purple-300 shadow-sm" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} />
             </div>
 
             <button disabled={loading} className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-bold text-white shadow-md hover:opacity-95 disabled:opacity-60 transition-opacity" type="submit">
