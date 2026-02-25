@@ -253,9 +253,14 @@ export default function UnlockSurveyPage() {
                         </div>
                       )}
 
-                      <div className="mt-6 flex items-baseline gap-2">
-                        <span className="text-3xl font-extrabold text-gray-900">$1.99</span>
-                        <span className="text-sm font-medium text-gray-500">one-time payment</span>
+                      <div className="mt-6 flex flex-col items-center justify-center border-y border-gray-100 py-4">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-extrabold text-gray-900">$1.99</span>
+                          <span className="text-sm font-medium text-gray-500 italic">one-time</span>
+                        </div>
+                        <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-blue-600">
+                          Lifetime Access
+                        </p>
                       </div>
 
                       <button
