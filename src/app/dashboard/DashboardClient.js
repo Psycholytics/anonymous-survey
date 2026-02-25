@@ -149,7 +149,7 @@ function HeaderMenu({ open, onToggle, onClose, onProfile, onSettings, onLogout }
             type="button"
             onClick={() => {
               onClose?.();
-              onProfile?.();
+              router.push("/dashboard");
             }}
             className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50"
             role="menuitem"
