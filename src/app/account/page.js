@@ -495,13 +495,6 @@ export default function AccountPage() {
 
             {/* Two buttons Only */}
             <div className="flex justify-end gap-2">
-              <HeaderIconButton
-                title="Back to dashboard"
-                onClick={() => router.push("/dashboard")}
-              >
-                ←
-              </HeaderIconButton>
-
               <HeaderMenu
                 open={openHeaderMenu}
                 onToggle={() => setOpenHeaderMenu((v) => !v)}
