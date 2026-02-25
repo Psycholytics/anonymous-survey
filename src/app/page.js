@@ -80,56 +80,57 @@ export default function HomePage() {
 
           {/* Preview Card */}
           <div className="relative">
-            {/* Glow moved behind the card in the DOM */}
+            {/* Glow */}
             <div className="pointer-events-none absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-500/15 to-purple-500/15 blur-2xl" />
             
-            {/* Added 'relative' to the card to ensure it stacks above the glow */}
-            <div className="relative rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
+            {/* Main Card */}
+            <div className="relative rounded-3xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
+              
+              {/* Mock Header (Simplified from screenshot) */}
+              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <p className="text-sm font-semibold">Preview</p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    What responders see (simple + fast)
-                  </p>
+                  <h3 className="text-xl font-extrabold text-gray-900 tracking-tight">The Main Character Check-In</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">Survey results</p>
                 </div>
-                <div className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-600">
-                  Anonymous
+                <div className="rounded-full bg-green-50 border border-green-200 px-3 py-1 text-xs font-bold text-green-700 shadow-sm flex items-center gap-1.5">
+                  <span className="text-base leading-none">🔓</span> Unlocked
                 </div>
               </div>
 
-              <div className="mt-6 space-y-4">
-                <div className="rounded-2xl bg-gray-50 p-4">
-                  <p className="text-sm font-semibold text-gray-900">
-                    What is your honest opinion about me?
+              {/* The Results Area */}
+              <div className="mt-5 rounded-3xl border border-gray-100 bg-gray-50/50 p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-sm font-bold text-gray-900 leading-snug">
+                    Am I actually the main character, or just an eccentric NPC?
                   </p>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-xs font-bold text-gray-600 shadow-sm">
+                    4
+                  </span>
+                </div>
 
-                  <div className="mt-3 flex flex-col gap-2">
-                    <div className="max-w-[85%] rounded-2xl bg-white px-4 py-3 text-sm text-gray-800 shadow-sm">
-                      Be 100% honest…
-                    </div>
-
-                    <div className="ml-auto max-w-[85%] rounded-2xl bg-blue-500 px-4 py-3 text-sm text-white shadow-sm">
-                      You’re more capable than you think. Stop second-guessing.
-                    </div>
-
-                    <div className="max-w-[85%] rounded-2xl bg-white px-4 py-3 text-sm text-gray-800 shadow-sm">
-                      Anything else you want me to know?
-                    </div>
-
-                    <div className="ml-auto max-w-[85%] rounded-2xl bg-blue-500 px-4 py-3 text-sm text-white shadow-sm">
-                      Keep going. Your progress is obvious.
-                    </div>
+                {/* The Mock Answers */}
+                <div className="mt-5 space-y-3">
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
+                    Main character energy. You wore a cape to the grocery store.
                   </div>
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
+                    NPC for sure. You've been pacing the same hallway for 3 hours.
+                  </div>
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
+                    Look within. The protagonist was the friends we made along the way.
+                  </div>
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 shadow-sm">
+                    I just want my lawnmower back.
+                  </div>
+                </div>
 
-                  <button type="button" disabled className="mt-4 w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-sm cursor-default">
-                    Submit response
+                <div className="mt-4 flex">
+                  <button type="button" disabled className="rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 shadow-sm cursor-default">
+                    Show all (4)
                   </button>
-
-                  <p className="mt-2 text-center text-xs text-gray-500">
-                    Takes ~10 seconds
-                  </p>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
