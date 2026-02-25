@@ -188,19 +188,18 @@ export default function UnlockSurveyPage() {
               to guess anymore.
             </p>
 
-            {/* PASTE STARTING HERE */}
-            <div className="mt-8 space-y-3 opacity-50">
-              <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-100 flex items-center px-4">
-                <div className="h-2 w-3/4 bg-gray-200 rounded-full blur-[4px]" />
-              </div>
-              <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-100 flex items-center px-4">
-                <div className="h-2 w-1/2 bg-gray-200 rounded-full blur-[4px]" />
-              </div>
-              <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-100 flex items-center px-4">
-                <div className="h-2 w-2/3 bg-gray-200 rounded-full blur-[5px]" />
-              </div>
+            {/* Blurred Teaser Section */}
+            <div className="mt-8 space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex h-14 w-full items-center justify-between rounded-2xl border border-gray-200 bg-white/50 px-4 shadow-sm backdrop-blur-sm">
+                  <div className={cx(
+                    "h-2 rounded-full bg-gray-300 blur-[5px]",
+                    i === 1 ? "w-3/4" : i === 2 ? "w-1/2" : "w-2/3"
+                  )} />
+                  <span className="text-lg opacity-30">🔒</span>
+                </div>
+              ))}
             </div>
-            {/* PASTE ENDING HERE */}
 
             <div className="mt-5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm">
               Some might surprise you 😳
