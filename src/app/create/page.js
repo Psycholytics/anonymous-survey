@@ -262,15 +262,22 @@ export default function CreatePage() {
               <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
                 {/* Title Input */}
                 <div className="group">
-                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
-                    Survey Title <span className="font-medium lowercase opacity-60">(optional)</span>
-                  </label>
+                  <div className="flex items-end justify-between">
+                    <label className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400">
+                      Survey Title <span className="font-medium lowercase opacity-60">(optional)</span>
+                    </label>
+                    <span className={`text-[10px] font-bold transition-colors ${title.length > MAX_TITLE_LEN ? "text-red-500" : "text-gray-400"}`}>
+                      {title.length}/{MAX_TITLE_LEN}
+                    </span>
+                  </div>
                   <input
                     type="text"
                     placeholder="e.g., Be honest with me..."
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="mt-2 w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-4 text-sm font-semibold outline-none transition-all focus:border-blue-400 focus:bg-white"
+                    className={`mt-2 w-full rounded-2xl border bg-gray-50/50 p-4 text-sm font-semibold outline-none transition-all focus:bg-white ${
+                      title.length > MAX_TITLE_LEN ? "border-red-400 focus:border-red-500" : "border-gray-100 focus:border-blue-400"
+                    }`}
                   />
                 </div>
 
@@ -311,25 +318,35 @@ export default function CreatePage() {
 
                   <div className="space-y-3">
                     {questions.map((q, index) => (
-                      <div key={index} className="relative group">
-                        <input
-                          type="text"
-                          placeholder="Type a question..."
-                          value={q}
-                          onChange={(e) => updateQuestion(index, e.target.value)}
-                          className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-4 pr-12 text-sm font-medium outline-none transition-all focus:border-purple-400 focus:bg-white"
-                        />
-                        {questions.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeQuestion(index)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-gray-300 hover:text-red-500"
-                          >
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        )}
+                      <div key={index} className="group">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Type a question..."
+                            value={q}
+                            onChange={(e) => updateQuestion(index, e.target.value)}
+                            className={`w-full rounded-2xl border bg-gray-50/50 p-4 pr-12 text-sm font-medium outline-none transition-all focus:bg-white ${
+                              q.length > MAX_Q_LEN ? "border-red-400 focus:border-red-500 text-red-600" : "border-gray-100 focus:border-purple-400"
+                            }`}
+                          />
+                          {questions.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeQuestion(index)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors"
+                            >
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                        {/* Auto-fading character counter */}
+                        <div className={`mt-1 px-2 text-right text-[10px] font-bold transition-opacity duration-200 ${
+                          q.length > MAX_Q_LEN ? "text-red-500 opacity-100" : "text-gray-400 opacity-0 group-focus-within:opacity-100"
+                        }`}>
+                          {q.length}/{MAX_Q_LEN}
+                        </div>
                       </div>
                     ))}
                   </div>
