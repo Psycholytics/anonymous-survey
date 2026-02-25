@@ -155,14 +155,21 @@ export default function UnlockSurveyPage() {
       </div>
 
       <section className="relative mx-auto max-w-6xl px-6 py-12">
-        <button
-          onClick={() =>
-            router.push(surveyId ? `/dashboard?surveyId=${surveyId}` : "/dashboard")
-          }
-          className="mb-8 text-xs font-semibold text-gray-600 hover:text-gray-900"
-        >
-          ← Back
-        </button>
+        <div className="fixed top-0 left-0 right-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+            <button
+              onClick={() => router.push(surveyId ? `/dashboard?surveyId=${surveyId}` : "/dashboard")}
+              className="flex h-10 items-center gap-2 rounded-2xl px-3 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              <span className="text-lg">‹</span> Back
+            </button>
+            
+            <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+          </div>
+        </div>
+
+        {/* Add a spacer so the content doesn't hide under the fixed header */}
+        <div className="h-16" />
 
         <div className="grid gap-6 md:grid-cols-2 md:items-start">
           {/* LEFT: Emotional copy */}
