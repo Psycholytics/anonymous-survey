@@ -188,6 +188,20 @@ export default function UnlockSurveyPage() {
               to guess anymore.
             </p>
 
+            {/* PASTE STARTING HERE */}
+            <div className="mt-8 space-y-3 opacity-50">
+              <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-100 flex items-center px-4">
+                <div className="h-2 w-3/4 bg-gray-200 rounded-full blur-[4px]" />
+              </div>
+              <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-100 flex items-center px-4">
+                <div className="h-2 w-1/2 bg-gray-200 rounded-full blur-[4px]" />
+              </div>
+              <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-100 flex items-center px-4">
+                <div className="h-2 w-2/3 bg-gray-200 rounded-full blur-[5px]" />
+              </div>
+            </div>
+            {/* PASTE ENDING HERE */}
+
             <div className="mt-5 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm">
               Some might surprise you 😳
               <br />
