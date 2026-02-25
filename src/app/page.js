@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -26,12 +28,12 @@ export default function HomePage() {
 
           {/* Right: Login */}
           <nav>
-            <a
+            <Link
               href="/login?mode=login&next=/dashboard"
               className="inline-flex h-11 items-center justify-center rounded-2xl border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 whitespace-nowrap"
             >
               Log in
-            </a>
+            </Link>
           </nav>
 
         </div>
@@ -55,19 +57,19 @@ export default function HomePage() {
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a
+              <Link
                 href="/login?mode=signup&next=/create"
                 className="rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:opacity-95"
               >
                 Create your survey
-              </a>
+              </Link>
 
-              <a
+              <Link
                 href="#how"
                 className="rounded-2xl border border-gray-200 bg-white px-5 py-3 text-center text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50"
               >
                 See how it works
-              </a>
+              </Link>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-gray-600">
