@@ -211,6 +211,7 @@ function HeaderMenu({ open, onToggle, onClose, onDashboard, onProfile, onSetting
 
 export default function DashboardClient() {
   const router = useRouter();
+  const [revealing, setRevealing] = useState(false);
   const searchParams = useSearchParams();
   const surveyId = searchParams.get("surveyId");
   const unlocked = searchParams.get("unlocked");
