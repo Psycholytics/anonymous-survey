@@ -446,23 +446,35 @@ export default function DashboardClient() {
     router.push(`/dashboard?surveyId=${id}`);
   }
 
-  async function handleShare(sId, sTitle) {
+  async function handleShare(e, sId, sTitle) {
+    // Stop the click from triggering anything else on the page
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     const shareUrl = `${origin}/survey/${sId}`;
     const shareData = {
       title: sTitle || "Survey",
-      text: `Check out my survey on Psychelytics:`,
+      text: "Check out my survey on Tell Me What You Really Think:",
       url: shareUrl,
     };
 
-    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    // If the browser supports native sharing
+    if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share(shareData);
-        return; 
+        return; // Success!
       } catch (err) {
-        if (err.name !== "AbortError") console.error("Share failed:", err);
+        // If the user simply closed the native share sheet, do nothing
+        if (err.name === "AbortError" || err.name === "NotAllowedError") return;
+        
+        // Otherwise log it and let it fall through to your custom modal
+        console.error("Native share failed:", err);
       }
     }
 
+    // Fallback: Open your custom modal
     setSharingSurvey({ id: sId, title: sTitle });
   }
 
@@ -780,7 +792,9 @@ export default function DashboardClient() {
                         </button>
 
                         <button
-                          onClick={() => !linkDisabled && handleShare(s.id, s.title)}
+                          onClick={(e) => {
+                            if (!linkDisabled) handleShare(e, s.id, s.title);
+                          }}
                           disabled={linkDisabled}
                           className={cx(
                             "flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm transition-all active:scale-95",
@@ -893,7 +907,7 @@ export default function DashboardClient() {
                     Share your link to start collecting feedback.
                   </p>
                   <button
-                    onClick={() => handleShare(survey?.id, survey?.title)}
+                    onClick={(e) => handleShare(e, survey?.id, survey?.title)}
                     className="mt-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:border-gray-900 hover:text-gray-900 transition-all active:scale-95"
                     title="Share Survey"
                   >
