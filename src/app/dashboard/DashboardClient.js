@@ -446,6 +446,26 @@ export default function DashboardClient() {
     router.push(`/dashboard?surveyId=${id}`);
   }
 
+  async function handleShare(sId, sTitle) {
+    const shareUrl = `${origin}/survey/${sId}`;
+    const shareData = {
+      title: sTitle || "Survey",
+      text: `Check out my survey on Psychelytics:`,
+      url: shareUrl,
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return; 
+      } catch (err) {
+        if (err.name !== "AbortError") console.error("Share failed:", err);
+      }
+    }
+
+    setSharingSurvey({ id: sId, title: sTitle });
+  }
+
   async function copy(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -760,7 +780,7 @@ export default function DashboardClient() {
                         </button>
 
                         <button
-                          onClick={() => !linkDisabled && setSharingSurvey({ id: s.id, title: s.title })}
+                          onClick={() => !linkDisabled && handleShare(s.id, s.title)}
                           disabled={linkDisabled}
                           className={cx(
                             "flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm transition-all active:scale-95",
@@ -873,7 +893,7 @@ export default function DashboardClient() {
                     Share your link to start collecting feedback.
                   </p>
                   <button
-                    onClick={() => setSharingSurvey({ id: survey?.id, title: survey?.title })}
+                    onClick={() => handleShare(survey?.id, survey?.title)}
                     className="mt-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:border-gray-900 hover:text-gray-900 transition-all active:scale-95"
                     title="Share Survey"
                   >
