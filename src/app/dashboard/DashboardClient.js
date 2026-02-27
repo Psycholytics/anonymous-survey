@@ -450,7 +450,7 @@ export default function DashboardClient() {
     const shareUrl = `${origin}/survey/${sId}`;
     const shareData = {
       title: sTitle || "Survey",
-      text: `Check out my survey on Psychelytics:`,
+      text: `Tell me what you really think! Take my survey on Psychelytics:\n${shareUrl}`,
       url: shareUrl,
     };
 
