@@ -571,21 +571,27 @@ export default function DashboardClient() {
       {/* RENAME MODAL */}
       {renamingId && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-gray-900/20 backdrop-blur-sm px-6" onClick={() => setRenamingId(null)}>
-          <div className="w-full max-w-sm rounded-3xl border border-gray-200 bg-white p-6 shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+          <form 
+            className="w-full max-w-sm rounded-3xl border border-gray-200 bg-white p-6 shadow-2xl animate-in zoom-in-95" 
+            onClick={e => e.stopPropagation()}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleRename();
+            }}
+          >
             <h3 className="text-lg font-extrabold tracking-tight">Rename Survey</h3>
             <input 
               autoFocus
               className="mt-4 w-full rounded-2xl border border-gray-200 p-3 text-sm outline-none focus:border-blue-300 shadow-sm"
-              placeholder={deletingTitle}
+              placeholder="Enter new title..."
               value={renameValue}
               onChange={(e) => setRenameValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleRename()}
             />
             <div className="mt-6 flex gap-3">
-              <button onClick={() => setRenamingId(null)} className="flex-1 rounded-2xl border border-gray-200 py-2.5 text-sm font-bold hover:bg-gray-50">Cancel</button>
-              <button onClick={handleRename} className="flex-1 rounded-2xl bg-gray-900 py-2.5 text-sm font-bold text-white hover:bg-gray-800 shadow-md">Save</button>
+              <button type="button" onClick={() => setRenamingId(null)} className="flex-1 rounded-2xl border border-gray-200 py-2.5 text-sm font-bold hover:bg-gray-50">Cancel</button>
+              <button type="submit" className="flex-1 rounded-2xl bg-gray-900 py-2.5 text-sm font-bold text-white hover:bg-gray-800 shadow-md">Save</button>
             </div>
-          </div>
+          </form>
         </div>
       )}
 
