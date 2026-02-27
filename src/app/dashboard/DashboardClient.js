@@ -816,7 +816,13 @@ export default function DashboardClient() {
           // DETAIL VIEW
           <div className="grid gap-4">
             <div className="px-1 pt-2 pb-2">
-              
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="group flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                <span className="text-sm transition-transform group-hover:-translate-x-1">←</span>
+                Back to all surveys
+              </button>
             </div>
 
             <div className="px-1 pt-2 pb-2">
