@@ -446,11 +446,16 @@ export default function DashboardClient() {
     router.push(`/dashboard?surveyId=${id}`);
   }
 
-  async function handleShare(sId, sTitle) {
+  async function handleShare(e, sId, sTitle) {
+    // Stop the click from triggering anything else on the page
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     const shareUrl = `${origin}/survey/${sId}`;
     const shareData = {
-      // We intentionally leave out 'title' here so iOS doesn't create a broken rich-text link
-      text: `Tell me what you really think! Take my survey on Psychelytics:`,
+      // Passing ONLY the url guarantees the "Copy" button grabs the raw link
       url: shareUrl,
     };
 
