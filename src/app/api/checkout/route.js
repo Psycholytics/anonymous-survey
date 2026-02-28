@@ -48,12 +48,13 @@ export async function POST(req) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      customer_email: user.email, // <-- Pre-fills the checkout screen!
       line_items: [
         {
           price_data: {
             currency: "usd",
             product_data: { name: "Unlock survey responses" },
-            unit_amount: 199,
+            unit_amount: 199, // $1.99
           },
           quantity: 1,
         },
