@@ -29,6 +29,7 @@ export default function PublicProfilePage() {
 
   const [viewer, setViewer] = useState(null); // auth user (if logged in)
   const [profile, setProfile] = useState(null); // profile being viewed
+  const [publicSurveys, setPublicSurveys] = useState([]);
 
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
@@ -78,8 +79,29 @@ export default function PublicProfilePage() {
       }
 
       setProfile(prof);
+
+      // Fetch the user's active surveys
+      const { data: surveysData, error: surveysErr } = await supabase
+        .from("surveys")
+        .select("id, title, expires_at")
+        .eq("owner_id", prof.user_id)
+        .order("created_at", { ascending: false });
+
+      if (surveysErr) {
+        console.error("SURVEYS FETCH ERROR:", surveysErr);
+      } else {
+        // Filter out expired surveys if you only want active ones to show
+        const activeSurveys = (surveysData || []).filter(s => {
+          if (!s.expires_at) return true;
+          return new Date(s.expires_at) > new Date();
+        });
+        setPublicSurveys(activeSurveys);
+      }
+
       setLoading(false);
     }
+
+    boot();
 
     boot();
 
@@ -304,11 +326,34 @@ export default function PublicProfilePage() {
               </div>
             </div>
 
-            {/* --- BELOW HERE: your existing public profile content (surveys list, etc.) --- */}
-            <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <p className="text-sm text-gray-600">
-                (Next) We’ll plug your public surveys/content back in here.
-              </p>
+            {/* --- PUBLIC SURVEYS LIST --- */}
+            <div className="mt-8">
+              <h2 className="px-2 text-lg font-extrabold tracking-tight text-gray-900 mb-4">
+                Active Surveys
+              </h2>
+              
+              {publicSurveys.length === 0 ? (
+                <div className="rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+                  <p className="text-sm text-gray-500">No active surveys right now.</p>
+                </div>
+              ) : (
+                <div className="grid gap-3">
+                  {publicSurveys.map((survey) => (
+                    <button
+                      key={survey.id}
+                      onClick={() => router.push(`/survey/${survey.id}`)}
+                      className="flex items-center justify-between rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-blue-300 hover:shadow-md active:scale-[0.99]"
+                    >
+                      <span className="truncate text-base font-bold text-gray-900">
+                        {survey.title || "Anonymous Survey"}
+                      </span>
+                      <span className="ml-4 shrink-0 rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-600">
+                        Take Survey →
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}

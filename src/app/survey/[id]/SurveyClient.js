@@ -8,7 +8,7 @@ function cx(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function SurveyPage() {
+export default function SurveyClient() {
   const router = useRouter();
   const params = useParams();
   const surveyId = params?.id;
@@ -319,9 +319,14 @@ export default function SurveyPage() {
                   <textarea
                     ref={index === 0 ? firstInputRef : undefined}
                     placeholder="Type your honest thoughts..."
-                    className="w-full min-h-[140px] resize-none rounded-2xl bg-gray-50/50 p-5 text-sm font-medium outline-none transition-all focus:bg-white focus:ring-1 focus:ring-gray-100"
+                    className="w-full min-h-[140px] resize-none overflow-hidden rounded-2xl bg-gray-50/50 p-5 text-sm font-medium outline-none transition-all focus:bg-white focus:ring-1 focus:ring-gray-100"
                     value={answers[index] || ""}
-                    onChange={(e) => updateAnswer(index, e.target.value)}
+                    onChange={(e) => {
+                      updateAnswer(index, e.target.value);
+                      // Instantly adjust the height to match the text inside
+                      e.target.style.height = 'auto';
+                      e.target.style.height = `${e.target.scrollHeight}px`;
+                    }}
                     maxLength={500}
                     disabled={submitting || isExpired}
                   />
