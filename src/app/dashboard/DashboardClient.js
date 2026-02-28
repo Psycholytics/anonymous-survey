@@ -447,7 +447,6 @@ export default function DashboardClient() {
   }
 
   async function handleShare(e, sId, sTitle) {
-    // Stop the click from triggering anything else on the page
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -455,21 +454,31 @@ export default function DashboardClient() {
 
     const shareUrl = `${origin}/survey/${sId}`;
     const shareData = {
-      // Passing ONLY the url guarantees the "Copy" button grabs the raw link
+      title: sTitle || "Tell Me What You Really Think",
       url: shareUrl,
     };
 
-    // If the browser supports native sharing
-
+    // Safely check if the browser supports sharing this specific data
     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
       try {
         await navigator.share(shareData);
         return; 
       } catch (err) {
-        if (err.name !== "AbortError") console.error("Share failed:", err);
+        if (err.name === "AbortError" || err.name === "NotAllowedError") return;
+        console.error("Native share failed:", err);
       }
+    } else if (navigator.share) {
+        // Fallback for older browsers that have .share but not .canShare
+        try {
+            await navigator.share(shareData);
+            return;
+        } catch (err) {
+            if (err.name === "AbortError" || err.name === "NotAllowedError") return;
+            console.error("Native share failed:", err);
+        }
     }
 
+    // Fallback: Open your custom modal if native share fails or is unsupported
     setSharingSurvey({ id: sId, title: sTitle });
   }
 
