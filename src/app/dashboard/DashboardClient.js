@@ -596,45 +596,73 @@ export default function DashboardClient() {
       )}
 
       {/* HEADER */}
-      <header className="relative mx-auto max-w-full sm:max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
-            <div className="leading-tight">
-              <div className="text-sm font-extrabold tracking-tight">Dashboard</div>
-              <div className="text-[11px] text-gray-500">
-                {surveyId ? "Survey detail" : "My surveys"}
+      <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto max-w-full sm:max-w-6xl px-4 py-4 sm:px-6">
+          <div className="grid grid-cols-3 items-center">
+            
+            {/* 1. Left: Context label (Mobile back button or Desktop label) */}
+            <div className="flex justify-start">
+              {surveyId ? (
+                <button 
+                  onClick={() => router.push("/dashboard")}
+                  className="group flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors"
+                >
+                  <span className="text-base transition-transform group-hover:-translate-x-0.5">←</span>
+                  <span className="hidden sm:inline">Back</span>
+                </button>
+              ) : (
+                <div className="hidden sm:block leading-tight">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+                    Dashboard
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Center: Spectrum BC Branding */}
+            <div className="flex flex-col items-center justify-center text-center">
+              <span className="font-spectrum text-2xl font-bold tracking-tighter text-gray-900 sm:text-3xl">
+                Psychelytics
+              </span>
+              <div className="hidden sm:block text-[9px] font-black uppercase tracking-[0.35em] text-gray-400 mt-0.5">
+                Tell Me What You Really Think
               </div>
+            </div>
+
+            {/* 3. Right: Menu */}
+            <div className="flex justify-end">
+              <HeaderMenu
+                open={openHeaderMenu}
+                onToggle={() => setOpenHeaderMenu((v) => !v)}
+                onClose={() => setOpenHeaderMenu(false)}
+                onDashboard={() => router.push("/dashboard")}
+                onProfile={goToProfile}
+                onSettings={goToSettings}
+                onLogout={logout}
+              />
             </div>
           </div>
 
-          <HeaderMenu
-            open={openHeaderMenu}
-            onToggle={() => setOpenHeaderMenu((v) => !v)}
-            onClose={() => setOpenHeaderMenu(false)}
-            onDashboard={() => router.push("/dashboard")}
-            onProfile={goToProfile}
-            onSettings={goToSettings}
-            onLogout={logout}
-          />
-        </div>
-
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => {
-              sessionStorage.setItem("nav_from_dashboard", "1");
-              router.push("/create");
-            }}
-            className={cx(
-              "w-full inline-flex items-center justify-center",
-              "h-12 rounded-3xl px-5 text-sm font-extrabold text-white shadow-sm",
-              "bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-95",
-              "active:scale-[0.99] transition"
-            )}
-          >
-            New survey
-          </button>
+          {/* Action Row */}
+          {!surveyId && (
+            <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-500">
+              <button
+                type="button"
+                onClick={() => {
+                  sessionStorage.setItem("nav_from_dashboard", "1");
+                  router.push("/create");
+                }}
+                className={cx(
+                  "w-full inline-flex items-center justify-center",
+                  "h-11 rounded-2xl px-5 text-sm font-extrabold text-white shadow-md",
+                  "bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-95",
+                  "active:scale-[0.98] transition-all"
+                )}
+              >
+                New survey
+              </button>
+            </div>
+          )}
         </div>
       </header>
 

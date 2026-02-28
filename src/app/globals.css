@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
+/* 1. Register the custom font */
+@font-face {
+  font-family: 'SpectrumBC';
+  src: url('/fonts/spectrum-bc.woff2') format('woff2'),
+       url('/fonts/spectrum-bc.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-spectrum: 'SpectrumBC', sans-serif; /* 2. Set the variable */
 }
 
 @theme inline {
@@ -10,6 +21,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-spectrum: var(--font-spectrum); /* 3. Map to Tailwind */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,14 +35,14 @@ html {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  font-size: 16px; /* 🔑 THIS FIXES THE ZOOM */
+  font-size: 16px;
 }
 
 body {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  font-size: 16px; /* 🔑 THIS FIXES THE ZOOM */
+  font-size: 16px;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
