@@ -449,10 +449,12 @@ export default function DashboardClient() {
   async function handleShare(sId, sTitle) {
     const shareUrl = `${origin}/survey/${sId}`;
     const shareData = {
-      title: sTitle || "Survey",
-      text: `Tell me what you really think! Take my survey on Psychelytics:\n${shareUrl}`,
+      // We intentionally leave out 'title' here so iOS doesn't create a broken rich-text link
+      text: `Tell me what you really think! Take my survey on Psychelytics:`,
       url: shareUrl,
     };
+
+    // If the browser supports native sharing
 
     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
       try {
