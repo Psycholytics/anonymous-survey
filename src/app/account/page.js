@@ -187,6 +187,7 @@ export default function AccountPage() {
 
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // saving states
   const [savingHandle, setSavingHandle] = useState(false);
@@ -447,6 +448,7 @@ export default function AccountPage() {
     setPw1("");
     setPw2("");
     setEditPassword(false);
+    setShowPassword(false);
   }
 
   function RuleLine({ ok, children }) {
@@ -635,9 +637,28 @@ export default function AccountPage() {
                   <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-500">••••••••</div>
                 ) : (
                   <div className="mt-4 grid gap-3">
-                    <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">Current: ••••••••</div>
-                    <input type="password" value={pw1} onChange={(e) => setPw1(e.target.value)} placeholder="New password" className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none" />
-                    <div className="mt-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
+                      <span className="text-sm font-semibold text-gray-700">Current: ••••••••</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                      >
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                    
+                    <div className="relative">
+                      <input 
+                        type={showPassword ? "text" : "password"} 
+                        value={pw1} 
+                        onChange={(e) => setPw1(e.target.value)} 
+                        placeholder="New password" 
+                        className="w-full rounded-2xl border border-gray-200 px-4 py-3 pr-12 text-sm font-semibold text-gray-900 shadow-sm outline-none" 
+                      />
+                    </div>
+
+                    <div className="mt-1 mb-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
                       <div className="mb-2 text-[11px] font-extrabold text-gray-700">Password must include:</div>
                       <RuleLine ok={pwRules.len}>At least 8 characters</RuleLine>
                       <RuleLine ok={pwRules.upper}>An uppercase letter</RuleLine>
@@ -645,7 +666,17 @@ export default function AccountPage() {
                       <RuleLine ok={pwRules.number}>A number</RuleLine>
                       <RuleLine ok={pwRules.special}>A special character</RuleLine>
                     </div>
-                    <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Confirm password" className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm outline-none" />
+
+                    <div className="relative">
+                      <input 
+                        type={showPassword ? "text" : "password"} 
+                        value={pw2} 
+                        onChange={(e) => setPw2(e.target.value)} 
+                        placeholder="Confirm password" 
+                        className="w-full rounded-2xl border border-gray-200 px-4 py-3 pr-12 text-sm font-semibold text-gray-900 shadow-sm outline-none" 
+                      />
+                    </div>
+
                     <div className="mt-1 flex items-center gap-2">
                       <button type="button" onClick={savePassword} disabled={!passwordIsValid || savingPassword} className={cx("rounded-2xl px-5 py-3 text-sm font-semibold", !passwordIsValid || savingPassword ? "bg-gray-100 text-gray-400" : "bg-gradient-to-r from-blue-500 to-purple-600 text-white")}>Save password</button>
                       <button type="button" onClick={cancelPassword} className="rounded-2xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">Cancel</button>
