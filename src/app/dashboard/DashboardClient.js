@@ -446,42 +446,6 @@ export default function DashboardClient() {
     router.push(`/dashboard?surveyId=${id}`);
   }
 
-  async function handleShare(e, sId, sTitle) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
-    const shareUrl = `${origin}/survey/${sId}`;
-    const shareData = {
-      title: sTitle || "Tell Me What You Really Think",
-      url: shareUrl,
-    };
-
-    // Safely check if the browser supports sharing this specific data
-    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-        return; 
-      } catch (err) {
-        if (err.name === "AbortError" || err.name === "NotAllowedError") return;
-        console.error("Native share failed:", err);
-      }
-    } else if (navigator.share) {
-        // Fallback for older browsers that have .share but not .canShare
-        try {
-            await navigator.share(shareData);
-            return;
-        } catch (err) {
-            if (err.name === "AbortError" || err.name === "NotAllowedError") return;
-            console.error("Native share failed:", err);
-        }
-    }
-
-    // Fallback: Open your custom modal if native share fails or is unsupported
-    setSharingSurvey({ id: sId, title: sTitle });
-  }
-
   async function copy(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -802,7 +766,7 @@ export default function DashboardClient() {
                         </button>
 
                         <button
-                          onClick={() => !linkDisabled && handleShare(s.id, s.title)}
+                          onClick={() => !linkDisabled && setSharingSurvey({ id: s.id, title: s.title })}
                           disabled={linkDisabled}
                           className={cx(
                             "flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm transition-all active:scale-95",
@@ -921,7 +885,7 @@ export default function DashboardClient() {
                     Share your link to start collecting feedback.
                   </p>
                   <button
-                    onClick={() => handleShare(survey?.id, survey?.title)}
+                    onClick={() => setSharingSurvey({ id: survey?.id, title: survey?.title })}
                     className="mt-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:border-gray-900 hover:text-gray-900 transition-all active:scale-95"
                     title="Share Survey"
                   >
