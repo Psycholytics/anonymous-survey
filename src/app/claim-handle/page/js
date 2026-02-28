@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -29,6 +29,54 @@ export default function ClaimHandlePage() {
 
   const [handle, setHandle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [handleAvail, setHandleAvail] = useState("idle");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function check() {
+      const next = normalizeHandle(handle);
+
+      if (!next) {
+        setHandleAvail("idle");
+        return;
+      }
+
+      if (!isValidHandle(next)) {
+        setHandleAvail("invalid");
+        return;
+      }
+
+      setHandleAvail("checking");
+
+      const { data: existing, error } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("handle", next)
+        .maybeSingle();
+
+      if (cancelled) return;
+
+      if (error) {
+        console.error("AVAILABILITY ERROR:", error);
+        setHandleAvail("error");
+        return;
+      }
+
+      if (existing) {
+        setHandleAvail("taken");
+      } else {
+        setHandleAvail("available");
+      }
+    }
+
+    // Wait 350ms after they stop typing before checking
+    const t = setTimeout(check, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [handle]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -173,14 +221,20 @@ export default function ClaimHandlePage() {
                   autoComplete="off"
                 />
               </div>
-              <p className="mt-2 text-xs text-gray-500">
-                3–20 chars. Letters/numbers/underscore.
-              </p>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <p className="text-xs text-gray-500">
+                  3–20 chars. Letters/numbers/underscore.
+                </p>
+                {handleAvail === "checking" && <div className="text-[11px] font-semibold text-gray-500">Checking…</div>}
+                {handleAvail === "available" && <div className="text-[11px] font-semibold text-green-700">Available ✅</div>}
+                {handleAvail === "taken" && <div className="text-[11px] font-semibold text-red-600">Taken ❌</div>}
+                {handleAvail === "invalid" && <div className="text-[11px] font-semibold text-red-600">Invalid ❌</div>}
+              </div>
             </div>
 
             <button
-              disabled={loading}
-              className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+              disabled={loading || handleAvail !== "available"}
+              className="w-full rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
               type="submit"
             >
               {loading ? "Saving..." : "Save username"}
