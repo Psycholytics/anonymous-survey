@@ -155,12 +155,15 @@ export default function LoginClient() {
   /**
    * GOOGLE OAUTH LOGIN
    */
+  /**
+   * GOOGLE OAUTH LOGIN
+   */
   async function loginWithGoogle() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(nextUrl)}`,
+        redirectTo: `${window.location.origin}/callback`,
       },
     });
     if (error) {
