@@ -160,7 +160,7 @@ export default function LoginClient() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextUrl)}`,
+        redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(nextUrl)}`,
       },
     });
     if (error) {
