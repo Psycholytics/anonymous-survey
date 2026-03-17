@@ -8,7 +8,9 @@ export async function GET(request) {
   const next = searchParams.get('next') ?? '/dashboard'
 
   if (code) {
-    const cookieStore = cookies()
+    // In Next.js 15, we MUST await the cookies before using them
+    const cookieStore = await cookies() 
+    
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
