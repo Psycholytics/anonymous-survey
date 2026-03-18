@@ -4,9 +4,9 @@ import "./globals.css";
 
 // 2. Load Spectrum BC
 const spectrumBC = localFont({
-  src: "./fonts/SpectrumBC.woff2", // Adjust this to your actual filename
+  src: "../../public/fonts/spectrum-bc.woff2", 
   variable: "--font-spectrum",
-  weight: "100 900", // Adjust based on your font's capabilities
+  weight: "100 900", 
 });
 
 const geistSans = Geist({
