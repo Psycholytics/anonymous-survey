@@ -1,13 +1,5 @@
-import localFont from "next/font/local"; // 1. Import local font loader
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-// 2. Load Spectrum BC
-const spectrumBC = localFont({
-  src: "../../public/fonts/spectrum-bc.woff2", 
-  variable: "--font-spectrum",
-  weight: "100 900", // did it
-});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,10 +28,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* 1. We add 'overflow-hidden' here so the browser itself physically cannot bounce */}
-      <body className={`${geistSans.variable} ${geistMono.variable} ${spectrumBC.variable} antialiased bg-white overflow-hidden`}>
+      {/* Notice we removed the spectrumBC variable from here, but kept the iOS scroll locks! */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white overflow-hidden`}>
         
-        {/* 2. We wrap your app in a custom scrolling box that respects our rules */}
+        {/* The custom scroll box to kill the Safari bounce */}
         <div className="h-[100dvh] w-full overflow-y-auto overscroll-none">
           {children}
         </div>
