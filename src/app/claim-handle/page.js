@@ -218,7 +218,7 @@ function ClaimHandleContent() {
                   className="ml-2 w-full text-sm outline-none"
                   value={handle}
                   onChange={(e) => setHandle(normalizeHandle(e.target.value))}
-                  placeholder="albert_alston"
+                  placeholder="awesome_user_23" // Or simply "username"
                   autoComplete="off"
                 />
               </div>
