@@ -6,7 +6,7 @@ import "./globals.css";
 const spectrumBC = localFont({
   src: "../../public/fonts/spectrum-bc.woff2", 
   variable: "--font-spectrum",
-  weight: "100 900", 
+  weight: "100 900", // did it
 });
 
 const geistSans = Geist({
