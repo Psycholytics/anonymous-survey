@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -18,7 +18,8 @@ function isValidHandle(handle) {
   return /^[a-z0-9][a-z0-9_]{2,19}$/.test(handle);
 }
 
-export default function ClaimHandlePage() {
+// 1. We renamed this from "export default function ClaimHandlePage" to just "ClaimHandleContent"
+function ClaimHandleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -243,5 +244,14 @@ export default function ClaimHandlePage() {
         </div>
       </section>
     </main>
+  );
+}
+
+// 2. We added this new default export to wrap the whole page in Suspense to satisfy Next.js build requirements!
+export default function ClaimHandlePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <ClaimHandleContent />
+    </Suspense>
   );
 }
