@@ -28,7 +28,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* Notice we removed the spectrumBC variable from here, but kept the iOS scroll locks! */}
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white overflow-hidden`}>
         
         {/* The custom scroll box to kill the Safari bounce */}
