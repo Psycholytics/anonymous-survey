@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { PsychelyticsLogo } from "./PsychelyticsLogo";
+import { PsychelyticsLogo } from "src/components/PsychelyticsLogo";
 
 function cx(...classes) {
   return classes.filter(Boolean).join(" ");
