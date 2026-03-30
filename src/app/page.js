@@ -143,9 +143,18 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="relative border-t border-gray-200">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} Psychelytics</p>
-          <p>Privacy-first feedback</p>
+        <div className="mx-auto flex flex-col sm:flex-row max-w-6xl items-center justify-between px-6 py-8 text-xs text-gray-500 gap-4">
+          <p>© {new Date().getFullYear()} Psychelytics. All rights reserved.</p>
+          
+          {/* Legal Links Added Here */}
+          <div className="flex items-center gap-6 font-medium">
+            <Link href="/terms" className="hover:text-gray-900 transition-colors">
+              Terms & Conditions
+            </Link>
+            <Link href="/privacy" className="hover:text-gray-900 transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </footer>
     </main>
