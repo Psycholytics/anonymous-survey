@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PsychelyticsLogo } from "../components/PsychelyticsLogo";
 
 export default function HomePage() {
   return (
@@ -14,9 +15,9 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/90 backdrop-blur-md">
         <div className="relative mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
           
-          {/* Left: Emblem (replace with real logo later) */}
+          {/* Left: Emblem */}
           <div className="flex items-center">
-            <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+            <PsychelyticsLogo className="h-11 w-11 drop-shadow-sm" />
           </div>
 
           {/* Center: Psychelytics */}
