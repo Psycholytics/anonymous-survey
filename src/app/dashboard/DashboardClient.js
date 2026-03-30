@@ -1,9 +1,10 @@
 "use client";
 
+import { AppLogo } from "@/components/AppLogo";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { PsychelyticsLogo } from "../components/PsychelyticsLogo";
+
 
 function cx(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -600,7 +601,7 @@ export default function DashboardClient() {
       <header className="relative mx-auto max-w-full sm:max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <PsychelyticsLogo className="h-10 w-10 drop-shadow-sm" />
+            <AppLogo className="h-10 w-10 drop-shadow-sm" />
             <div className="leading-tight">
               <div className="text-sm font-extrabold tracking-tight">Dashboard</div>
               <div className="text-[11px] text-gray-500">

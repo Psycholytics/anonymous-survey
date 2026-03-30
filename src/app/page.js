@@ -1,5 +1,6 @@
+import { AppLogo } from "@/components/AppLogo";
 import Link from "next/link";
-import { PsychelyticsLogo } from "../components/PsychelyticsLogo";
+
 
 export default function HomePage() {
   return (
@@ -17,7 +18,7 @@ export default function HomePage() {
           
           {/* Left: Emblem */}
           <div className="flex items-center">
-            <PsychelyticsLogo className="h-11 w-11 drop-shadow-sm" />
+            <AppLogo className="h-11 w-11 drop-shadow-sm" />
           </div>
 
           {/* Center: Psychelytics */}
