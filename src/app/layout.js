@@ -23,6 +23,10 @@ export const viewport = {
 export const metadata = {
   title: "Psychelytics",
   description: "Tell Me What You Really Think",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png", // <--- Add this line
+  },
 };
 
 export default function RootLayout({ children }) {
