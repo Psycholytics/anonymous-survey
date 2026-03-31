@@ -1,5 +1,6 @@
 "use client";
 
+import { AppLogo } from "./AppLogo";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -104,7 +105,7 @@ export default function ProfileTopBar({ profileUserId }) {
     <div className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         {/* Logo/Emblem to match other pages */}
-        <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+        <AppLogo className="h-10 w-10 drop-shadow-sm" />
 
         <HeaderMenu
           open={openHeaderMenu}

@@ -1,5 +1,6 @@
 "use client";
 
+import { AppLogo } from "@/components/AppLogo";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -493,7 +494,7 @@ export default function AccountPage() {
         <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6">
           <div className="flex items-center justify-between">
             {/* Emblem Only */}
-            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm" />
+            <AppLogo className="h-10 w-10 drop-shadow-sm" />
 
             {/* Two buttons Only */}
             <div className="flex justify-end gap-2">
